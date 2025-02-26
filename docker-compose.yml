@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_container
+    restart: always
+    environment:
+      POSTGRES_USER: aurora
+      POSTGRES_PASSWORD: aurora
+      POSTGRES_DB: aurora
+    ports:
+      - "5432:5432" # Локальный порт:Порт контейнера
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Хранение данных
+
+volumes:
+  postgres_data:
