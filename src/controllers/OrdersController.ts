@@ -31,4 +31,3 @@ export const getOrderById = async (req: Request, res: Response) => {
   }
 };
 
-
