@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/UserService";
-import { handleError } from "../utils/handlerErros";
+import { handleError } from "../utils/handlerError";
 
 // Получение всех пользователей
 export const getUsers = async (_req: Request, res: Response) => {
