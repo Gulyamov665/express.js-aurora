@@ -5,7 +5,7 @@ import { handleError } from "../utils/handlerError";
 export const getAllOrders = async (_req: Request, res: Response) => {
   try {
     const orders = await OrderService.getAllOrders();
-    res.json(orders);
+    res.status(200).json({ someData: orders });
   } catch (error) {
     handleError(res, error, 500);
   }
@@ -31,3 +31,12 @@ export const getOrderById = async (req: Request, res: Response) => {
   }
 };
 
+export const getOrderByUserId = async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  try {
+    const orders = await OrderService.findOrderByUserId(id);
+    res.status(200).json(orders);
+  } catch (error) {
+    handleError(res, error, 400);
+  }
+};
