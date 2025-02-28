@@ -1,4 +1,4 @@
-import { AppDataSource } from "../database/data-source";
+import { AppDataSource } from "../config/database/data-source";
 import { Orders } from "../entities/Orders";
 
 export class OrderService {
@@ -13,7 +13,7 @@ export class OrderService {
     return this.OrdersRepo.save(newOrder);
   }
 
-  static async findOrderById(id: number): Promise<Orders[]> {
+  static async findOrdersByVendorId(id: number): Promise<Orders[]> {
     return await this.OrdersRepo.find({ where: { restaurant: id } });
   }
 

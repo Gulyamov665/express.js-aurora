@@ -1,16 +1,15 @@
-import { connectDB } from "./database";
 import "reflect-metadata";
 import express from "express";
 import corsMiddleware from "./config/cors";
 import routes from "./routes";
+import { logging } from "./utils/logger";
 
 const app = express();
 
+app.use(logging);
+
 app.use(corsMiddleware);
 app.use(express.json());
-
 app.use(routes);
-
-connectDB();
 
 export default app;
