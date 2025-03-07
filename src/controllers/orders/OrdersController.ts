@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
-import { OrderService } from "../services/OrdersService";
-import { handleError } from "../utils/handlerError";
+import { OrderService } from "../../services/OrdersService";
+import { handleError } from "../../utils/handlerError";
+import { calcTotalPrice } from "../../utils/countTotalPrice";
+import { Orders } from "../../entities/Orders";
+import { TypedRequest } from "./types";
 
 export const getAllOrders = async (_req: Request, res: Response) => {
   try {
@@ -11,10 +14,13 @@ export const getAllOrders = async (_req: Request, res: Response) => {
   }
 };
 
-export const createOrder = async (req: Request, res: Response) => {
+export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
   try {
-    const orderData = req.body;
-    const newOrder = await OrderService.createOrder(orderData);
+    const data = req.body;
+    const totalPrice = calcTotalPrice(data.products);
+    const dataWithTotalPrice = { ...data, total_price: totalPrice };
+
+    const newOrder = await OrderService.createOrder(dataWithTotalPrice);
     res.status(201).json(newOrder);
   } catch (error) {
     handleError(res, error, 400);

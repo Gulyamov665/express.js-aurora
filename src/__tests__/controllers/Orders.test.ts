@@ -48,7 +48,7 @@ describe("POST /api/orders", () => {
   });
 
   it("Должен вернуть заказ по ID со статусом 200", async () => {
-    (OrderService.findOrdersByVendorId as jest.Mock).mockResolvedValue(mockOrder);
+    (OrderService.findOrdersByVendorId as jest.Mock).mockResolvedValue(mockOrderDataAll);
 
     const response = await request(app).get("/api/orders/4");
     console.log(response.body.id);

@@ -2,7 +2,7 @@ import "reflect-metadata";
 import express from "express";
 import corsMiddleware from "./config/cors";
 import routes from "./routes";
-import { logging } from "./utils/logger";
+import { logging } from "./config/logger";
 
 const app = express();
 

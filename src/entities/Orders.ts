@@ -7,8 +7,8 @@ export class Orders extends BaseModel {
   products!: {
     id: number;
     price: number;
+    name: string;
     quantity: number;
-    total_price: number;
   }[];
 
   @Column({ type: "decimal" })
