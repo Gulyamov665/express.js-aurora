@@ -3,7 +3,7 @@ import { checkAllowedFields, checkBodyFields } from "../utils/validationUtils";
 
 const bodyAllowedFields = ["created_by", "lat", "long", "user_id", "restaurant", "products"];
 const productAllowedFields = ["id", "price", "quantity", "name"];
-//валидациа
+
 export const orderValidation: ValidationChain[] = [
   body("*").custom((_, { req }) => checkBodyFields(req.body, bodyAllowedFields)),
   body("products").custom((products) => checkAllowedFields(products, productAllowedFields)),
