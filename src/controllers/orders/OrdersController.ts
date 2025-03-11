@@ -5,9 +5,12 @@ import { calcTotalPrice } from "../../utils/countTotalPrice";
 import { Orders } from "../../entities/Orders";
 import { TypedRequest } from "./types";
 
-export const getAllOrders = async (_req: Request, res: Response) => {
+export const getAllOrders = async (req: Request, res: Response) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+
   try {
-    const orders = await OrderService.getAllOrders();
+    const orders = await OrderService.getAllOrders(page, limit);
     res.status(200).json(orders);
   } catch (error) {
     handleError(res, error, 500);
