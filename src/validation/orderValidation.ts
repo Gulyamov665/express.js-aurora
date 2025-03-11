@@ -1,7 +1,7 @@
 import { body, ValidationChain } from "express-validator";
 import { checkAllowedFields, checkBodyFields } from "../utils/validationUtils";
 
-const bodyAllowedFields = ["created_by", "lat", "long", "user_id", "restaurant", "products"];
+const bodyAllowedFields = ["created_by", "lat", "long", "user_id", "restaurant", "products", "status"];
 const productAllowedFields = ["id", "price", "quantity", "name"];
 
 export const orderValidation: ValidationChain[] = [

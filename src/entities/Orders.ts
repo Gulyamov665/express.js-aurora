@@ -25,4 +25,7 @@ export class Orders extends BaseModel {
 
   @Column({ type: "int" })
   restaurant!: number;
+
+  @Column({ type: "varchar", default:"pending"})
+  status!: string;
 }
