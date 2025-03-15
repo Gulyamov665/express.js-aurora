@@ -9,7 +9,7 @@ if (!process.env.JWT_KEY) {
 }
 
 // const JWT_SECRET = process.env.JWT_KEY; // Нужно взять из Django settings.py
-const JWT_SECRET = String(process.env.SECRET_KEY); // Нужно взять из Django settings.py
+const JWT_SECRET = String(process.env.JWT_KEY); // Нужно взять из Django settings.py
 
 interface AuthenticatedRequest extends Request {
   user?: string | JwtPayload;
