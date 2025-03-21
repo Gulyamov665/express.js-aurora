@@ -20,7 +20,7 @@ export const WebSocketCors = {
       "http://localhost:3000",
       "http://localhost:5173",
       "https://stage.aurora-app.uz",
-      "https://aurora-3avt-git-feature-ts-gulyamov-mirzogulyams-projects.vercel.app/",
+      "https://aurora-3avt-git-feature-ts-gulyamov-mirzogulyams-projects.vercel.app",
     ], // Укажи URL фронта (или "*", если тестируешь локально)
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
