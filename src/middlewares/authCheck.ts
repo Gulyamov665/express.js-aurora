@@ -8,7 +8,8 @@ if (!process.env.JWT_KEY) {
   throw new Error("JWT_KEY is not defined in environment variables");
 }
 
-const JWT_SECRET = String(process.env.JWT_KEY); // Нужно взять из Django settings.py
+// const JWT_SECRET = String(process.env.JWT_KEY); // Нужно взять из Django settings.py
+const JWT_SECRET = "django-insecure-pl+(h+sfdiotagz&rz&lo45w^qa)j0b=sbcfv&r1(&##n-44s%"; // Нужно взять из Django settings.py
 
 interface AuthenticatedRequest extends Request {
   user?: string | JwtPayload;

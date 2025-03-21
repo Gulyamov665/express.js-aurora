@@ -4,6 +4,7 @@ import { handleError } from "../../utils/handlerError";
 import { calcTotalPrice } from "../../utils/countTotalPrice";
 import { Orders } from "../../entities/Orders";
 import { TypedRequest } from "./types";
+import { io } from "../..";
 
 export const getAllOrders = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
@@ -24,6 +25,7 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
     const dataWithTotalPrice = { ...data, total_price: totalPrice };
 
     const newOrder = await OrderService.createOrder(dataWithTotalPrice);
+    io.emit("new_order", newOrder);
     res.status(201).json(newOrder);
   } catch (error) {
     handleError(res, error, 400);
