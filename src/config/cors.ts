@@ -11,7 +11,7 @@ const corsMiddleware = cors({
 export const WebSocketCors = {
   cors: {
     // origin: "http://localhost:5173", // Укажи URL фронта (или "*", если тестируешь локально)
-    origin: "*", // Укажи URL фронта (или "*", если тестируешь локально)
+    origin: ["*"], // Укажи URL фронта (или "*", если тестируешь локально)
     methods: ["GET", "POST"],
   },
 };
