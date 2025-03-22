@@ -8,7 +8,7 @@ import { io } from "../..";
 
 export const getAllOrders = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
-  const limit = parseInt(req.query.limit as string) || 30;
+  const limit = parseInt(req.query.limit as string) || 130;
 
   try {
     const orders = await OrderService.getAllOrders(page, limit);
