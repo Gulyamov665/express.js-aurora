@@ -11,7 +11,7 @@ export const io = new Server(server, WebSocketCors);
 
 const startServer = async () => {
   if (process.env.NODE_ENV !== "test") {
-    await connectDB(); // Подключаем базу, только если это НЕ тесты
+    await connectDB();
   }
 
   server.listen(PORT, () => {
