@@ -9,10 +9,16 @@ import { io } from "../..";
 export const getAllOrders = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 130;
+  const id = Number(req.query?.id);
 
   try {
-    const orders = await OrderService.getAllOrders(page, limit);
-    res.status(200).json(orders);
+    if (id) {
+      const orders = await OrderService.findOrdersByVendorId(id);
+      res.status(200).json(orders);
+    } else {
+      const orders = await OrderService.getAllOrders(page, limit);
+      res.status(200).json(orders);
+    }
   } catch (error) {
     handleError(res, error, 500);
   }
@@ -50,4 +56,7 @@ export const getOrderByUserId = async (req: Request, res: Response) => {
   } catch (error) {
     handleError(res, error, 400);
   }
+};
+export const getOrdersByVendorId = async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
 };
