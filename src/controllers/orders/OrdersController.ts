@@ -57,6 +57,19 @@ export const getOrderByUserId = async (req: Request, res: Response) => {
     handleError(res, error, 400);
   }
 };
-export const getOrdersByVendorId = async (req: Request, res: Response) => {
+
+export const updateOrder = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
+  const updateData = req.body;
+
+  try {
+    const updatedOrder = await OrderService.updateOrder(id, updateData);
+    // if (!updatedOrder) {
+    //   return res.status(404).json({ message: "Order not found" });
+    // }
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    handleError(res, error, 400);
+  }
 };
+

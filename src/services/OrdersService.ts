@@ -37,4 +37,12 @@ export class OrderService {
   static async findOrderByUserId(id: number): Promise<Orders[]> {
     return await this.OrdersRepo.find({ where: { user_id: id } });
   }
+  static async updateOrder(id: number, updateData: Partial<Orders>): Promise<Orders | null> {
+    const order = await this.OrdersRepo.findOneBy({ id });
+    if (!order) {
+      return null;
+    }
+    Object.assign(order, updateData);
+    return this.OrdersRepo.save(order);
+  }
 }
