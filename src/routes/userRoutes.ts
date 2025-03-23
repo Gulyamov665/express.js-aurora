@@ -3,7 +3,6 @@ import { createUser, deleteUser, getUser, getUsers, updateUser } from "../contro
 
 
 const router = Router();
-router.use();
 
 router.get("/users", getUsers);
 router.get("/users/:id", getUser);
