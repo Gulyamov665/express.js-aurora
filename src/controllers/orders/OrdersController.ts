@@ -5,6 +5,7 @@ import { calcTotalPrice } from "../../utils/countTotalPrice";
 import { Orders } from "../../entities/Orders";
 import { TypedRequest } from "./types";
 import { io } from "../..";
+import axios from "axios";
 
 export const getAllOrders = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
@@ -32,6 +33,11 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
 
     const newOrder = await OrderService.createOrder(dataWithTotalPrice);
     io.emit("new_order", newOrder);
+    try {
+      await axios.post("https://notify.aurora-api.uz/fastapi/new-order", newOrder);
+    } catch (axiosError) {
+      console.error("Ошибка при отправке уведомления:", axiosError);
+    }
     res.status(201).json(newOrder);
   } catch (error) {
     handleError(res, error, 400);
@@ -72,4 +78,3 @@ export const updateOrder = async (req: Request, res: Response) => {
     handleError(res, error, 400);
   }
 };
-
