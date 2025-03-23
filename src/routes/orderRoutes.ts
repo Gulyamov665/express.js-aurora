@@ -11,10 +11,10 @@ import { validate } from "../middlewares/validationMiddleware";
 import { authenticateJWT } from "../middlewares/authCheck";
 
 export const orderRoutes = Router();
-orderRoutes.use(authenticateJWT);
+// orderRoutes.use(authenticateJWT);
 
-orderRoutes.get("/", getAllOrders);
-orderRoutes.post("/", orderValidation, validate, createOrder);
-orderRoutes.get("/:id", getOrderById);
+orderRoutes.get("/", authenticateJWT, getAllOrders);
+orderRoutes.post("/", authenticateJWT, orderValidation, validate, createOrder);
+orderRoutes.get("/:id", authenticateJWT, getOrderById);
 orderRoutes.put("/update/:id", updateOrder);
-orderRoutes.get("/me/:id", getOrderByUserId);
+orderRoutes.get("/me/:id", authenticateJWT, getOrderByUserId);

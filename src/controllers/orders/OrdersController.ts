@@ -73,6 +73,7 @@ export const updateOrder = async (req: Request, res: Response) => {
     // if (!updatedOrder) {
     //   return res.status(404).json({ message: "Order not found" });
     // }
+    io.emit("update_order", updatedOrder);
     res.status(200).json(updatedOrder);
   } catch (error) {
     handleError(res, error, 400);
