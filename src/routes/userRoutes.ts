@@ -1,9 +1,9 @@
 import { Router } from "express";
 import { createUser, deleteUser, getUser, getUsers, updateUser } from "../controllers/UserController";
-import { authenticateJWT } from "../middlewares/authCheck";
+
 
 const router = Router();
-router.use(authenticateJWT);
+router.use();
 
 router.get("/users", getUsers);
 router.get("/users/:id", getUser);
