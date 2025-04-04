@@ -30,13 +30,26 @@ export class OrderService {
     return this.OrdersRepo.save(newOrder);
   }
 
-  static async findOrdersByVendorId(id: number): Promise<Orders[]> {
-    return await this.OrdersRepo.find({ where: { restaurant: id } });
+  static async findOrdersByVendorId(id: number, page: number, limit: number): Promise<PaginatedOrders> {
+    const [orders, total] = await this.OrdersRepo.findAndCount({
+      where: { restaurant: id },
+      order: { created_at: "DESC" },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      data: orders,
+      total,
+      page,
+      last_page: Math.ceil(total / limit),
+    };
   }
 
   static async findOrderByUserId(id: number): Promise<Orders[]> {
     return await this.OrdersRepo.find({ where: { user_id: id } });
   }
+
   static async updateOrder(id: number, updateData: Partial<Orders>): Promise<Orders | null> {
     const order = await this.OrdersRepo.findOneBy({ id });
     if (!order) {

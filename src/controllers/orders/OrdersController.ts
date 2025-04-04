@@ -14,7 +14,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
 
   try {
     if (id) {
-      const orders = await OrderService.findOrdersByVendorId(id);
+      const orders = await OrderService.findOrdersByVendorId(id, 1, 10);
       res.status(200).json(orders);
     } else {
       const orders = await OrderService.getAllOrders(page, limit);
@@ -45,9 +45,11 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
 };
 
 export const getOrderById = async (req: Request, res: Response) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string);
   const id = Number(req.params.id);
   try {
-    const orders = await OrderService.findOrdersByVendorId(id);
+    const orders = await OrderService.findOrdersByVendorId(id, page, limit);
     res.status(200).json(orders);
   } catch (error) {
     handleError(res, error, 400);
