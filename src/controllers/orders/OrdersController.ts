@@ -28,8 +28,14 @@ export const getAllOrders = async (req: Request, res: Response) => {
 export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
   try {
     const data = req.body;
+
+    const getUser = await axios.get(`https://aurora-api.uz/api/v1/auth/user/${data.created_by}`);
     const totalPrice = calcTotalPrice(data.products);
-    const dataWithTotalPrice = { ...data, total_price: totalPrice };
+    const dataWithTotalPrice = {
+      ...data,
+      total_price: totalPrice,
+      created_by: `${getUser.data.first_name} ${getUser.data.last_name}`,
+    };
 
     const newOrder = await OrderService.createOrder(dataWithTotalPrice);
     io.emit("new_order", newOrder);
@@ -38,6 +44,7 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
     } catch (axiosError) {
       console.error("Ошибка при отправке уведомления:", axiosError);
     }
+
     res.status(201).json(newOrder);
   } catch (error) {
     handleError(res, error, 400);
