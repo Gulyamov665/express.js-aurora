@@ -25,29 +25,69 @@ export const getAllOrders = async (req: Request, res: Response) => {
   }
 };
 
+// export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
+//   try {
+//     const data = req.body;
+
+//     const getUser = await axios.get(`https://aurora-api.uz/api/v1/auth/user/${data.created_by}`);
+//     const totalPrice = calcTotalPrice(data.products);
+//     const dataWithTotalPrice = {
+//       ...data,
+//       total_price: totalPrice,
+//       created_by: `${getUser.data.first_name} ${getUser.data.last_name}`,
+//     };
+
+//     const newOrder = await OrderService.createOrder(dataWithTotalPrice);
+//     io.emit("new_order", newOrder);
+//     try {
+//       await axios.post("https://notify.aurora-api.uz/fastapi/new-order", newOrder);
+//     } catch (axiosError) {
+//       console.error("Ошибка при отправке уведомления:", axiosError);
+//     }
+
+//     res.status(201).json(newOrder);
+//   } catch (error) {
+//     handleError(res, error, 400);
+//   }
+// };
 export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
   try {
     const data = req.body;
 
-    const getUser = await axios.get(`https://aurora-api.uz/api/v1/auth/user/${data.created_by}`);
+    // Получаем пользователя
+    const userResponse = await axios.get(`https://aurora-api.uz/api/v1/auth/user/${data.created_by}`);
+    const user = userResponse.data;
+    const createdByFullName = `${user.first_name} ${user.last_name}`;
+
+    // Вычисляем общую стоимость
     const totalPrice = calcTotalPrice(data.products);
-    const dataWithTotalPrice = {
+
+    const orderData = {
       ...data,
       total_price: totalPrice,
-      created_by: `${getUser.data.first_name} ${getUser.data.last_name}`,
+      created_by: createdByFullName,
     };
 
-    const newOrder = await OrderService.createOrder(dataWithTotalPrice);
-    io.emit("new_order", newOrder);
-    try {
-      await axios.post("https://notify.aurora-api.uz/fastapi/new-order", newOrder);
-    } catch (axiosError) {
-      console.error("Ошибка при отправке уведомления:", axiosError);
-    }
+    // Создание заказа
+    const newOrder = await OrderService.createOrder(orderData);
 
-    res.status(201).json(newOrder);
+    // Отправка события через сокеты
+    io.emit("new_order", newOrder);
+
+    // Отправка уведомления — не блокируем основной try/catch
+    notifyAboutNewOrder(newOrder);
+
+    return res.status(201).json(newOrder);
   } catch (error) {
-    handleError(res, error, 400);
+    return handleError(res, error, 400);
+  }
+};
+
+const notifyAboutNewOrder = async (order: any) => {
+  try {
+    await axios.post("https://notify.aurora-api.uz/fastapi/new-order", order);
+  } catch (error) {
+    console.error("Ошибка при отправке уведомления:", error);
   }
 };
 
