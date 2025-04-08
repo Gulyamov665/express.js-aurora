@@ -50,6 +50,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
 //     handleError(res, error, 400);
 //   }
 // };
+
 export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
   try {
     const data = req.body;
@@ -61,23 +62,19 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
 
     // Вычисляем общую стоимость
     const totalPrice = calcTotalPrice(data.products);
-
     const orderData = {
       ...data,
       total_price: totalPrice,
       created_by: createdByFullName,
     };
-
     // Создание заказа
     const newOrder = await OrderService.createOrder(orderData);
-
     // Отправка события через сокеты
     io.emit("new_order", newOrder);
-
     // Отправка уведомления — не блокируем основной try/catch
     notifyAboutNewOrder(newOrder);
 
-    return res.status(201).json(newOrder);
+    res.status(201).json(newOrder);
   } catch (error) {
     return handleError(res, error, 400);
   }
