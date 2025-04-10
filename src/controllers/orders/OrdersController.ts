@@ -25,32 +25,6 @@ export const getAllOrders = async (req: Request, res: Response) => {
   }
 };
 
-// export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
-//   try {
-//     const data = req.body;
-
-//     const getUser = await axios.get(`https://aurora-api.uz/api/v1/auth/user/${data.created_by}`);
-//     const totalPrice = calcTotalPrice(data.products);
-//     const dataWithTotalPrice = {
-//       ...data,
-//       total_price: totalPrice,
-//       created_by: `${getUser.data.first_name} ${getUser.data.last_name}`,
-//     };
-
-//     const newOrder = await OrderService.createOrder(dataWithTotalPrice);
-//     io.emit("new_order", newOrder);
-//     try {
-//       await axios.post("https://notify.aurora-api.uz/fastapi/new-order", newOrder);
-//     } catch (axiosError) {
-//       console.error("Ошибка при отправке уведомления:", axiosError);
-//     }
-
-//     res.status(201).json(newOrder);
-//   } catch (error) {
-//     handleError(res, error, 400);
-//   }
-// };
-
 export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
   try {
     const data = req.body;
@@ -67,11 +41,9 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
       total_price: totalPrice,
       created_by: createdByFullName,
     };
-    // Создание заказа
+
     const newOrder = await OrderService.createOrder(orderData);
-    // Отправка события через сокеты
     io.emit("new_order", newOrder);
-    // Отправка уведомления — не блокируем основной try/catch
     notifyAboutNewOrder(newOrder);
 
     res.status(201).json(newOrder);
@@ -116,9 +88,6 @@ export const updateOrder = async (req: Request, res: Response) => {
 
   try {
     const updatedOrder = await OrderService.updateOrder(id, updateData);
-    // if (!updatedOrder) {
-    //   return res.status(404).json({ message: "Order not found" });
-    // }
     io.emit("update_order", updatedOrder);
     res.status(200).json(updatedOrder);
   } catch (error) {
