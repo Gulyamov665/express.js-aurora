@@ -29,6 +29,7 @@ export const getCartItems = async (req: Request, res: Response) => {
       totalPrice,
       user: cartData?.user_id,
       vendor: cartData?.restaurant,
+      id: cartData?.id,
     });
   } catch (error) {
     handleError(res, error, 400);
