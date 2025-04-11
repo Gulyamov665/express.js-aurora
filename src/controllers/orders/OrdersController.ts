@@ -55,7 +55,10 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
     notifyAboutNewOrder(newOrder);
 
     if (res.statusCode === 200) {
-      const cartDeleted = await CartService.removeCartByUserAndRestaurant(data.user_id, data.restaurant); // Удаляем корзину по cart_id
+      const cartDeleted = await CartService.removeCartByUserAndRestaurant({
+        user_id: data.user_id,
+        restaurant: data.restaurant,
+      }); // Удаляем корзину по cart_id
 
       if (!cartDeleted) {
         console.warn(`Корзина с ID ${data} не найдена или не была удалена.`);

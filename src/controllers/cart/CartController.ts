@@ -53,14 +53,10 @@ export const decreaseItem = async (req: Request, res: Response) => {
 };
 
 export const removeCart = async (req: Request, res: Response) => {
-  const { user_id, restaurant } = req.params; // Получаем cartId из параметров маршрута
+  const { cartId } = req.params;
 
   try {
-    const isDeleted = await CartService.removeCartByUserAndRestaurant(Number(user_id), Number(restaurant));
-
-    // if (!isDeleted) {
-    //   return res.status(404).json({ message: "Cart not found" });
-    // }
+    await CartService.removeCartByUserAndRestaurant({ id: Number(cartId) });
 
     res.status(200).json({ message: "Cart deleted successfully" });
   } catch (error) {
