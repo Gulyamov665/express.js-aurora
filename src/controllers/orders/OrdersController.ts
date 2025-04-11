@@ -1,11 +1,19 @@
 import { Request, Response } from "express";
 import { OrderService } from "../../services/OrdersService";
 import { handleError } from "../../utils/handlerError";
-import { calcTotalPrice } from "../../utils/countTotalPrice";
+import { calcTotalPrice, Product } from "../../utils/countTotalPrice";
 import { Orders } from "../../entities/Orders";
 import { TypedRequest } from "./types";
 import { io } from "../..";
+import { CartService } from "../../services/CartService";
 import axios from "axios";
+
+export interface CreateOrderDTO {
+  created_by: number;
+  products: Product[];
+  cart_id: number;
+  restaurant: number;
+}
 
 export const getAllOrders = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
@@ -45,6 +53,14 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
     const newOrder = await OrderService.createOrder(orderData);
     io.emit("new_order", newOrder);
     notifyAboutNewOrder(newOrder);
+
+    if (res.statusCode === 200) {
+      const cartDeleted = await CartService.removeCartByUserAndRestaurant(data.user_id, data.restaurant); // Удаляем корзину по cart_id
+
+      if (!cartDeleted) {
+        console.warn(`Корзина с ID ${data} не найдена или не была удалена.`);
+      }
+    }
 
     res.status(201).json(newOrder);
   } catch (error) {

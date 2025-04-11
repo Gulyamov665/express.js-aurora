@@ -86,4 +86,14 @@ export class CartService {
     // Сохраняем изменения в корзине
     return await this.CartRepo.save(cart);
   }
+
+  static async removeCartByUserAndRestaurant(user_id: number, restaurant: number): Promise<boolean> {
+    try {
+      const result = await this.CartRepo.delete({ user_id, restaurant }); // Удаляем корзину по user_id и restaurant_id
+      return result.affected !== 0; // Возвращаем true, если корзина была удалена
+    } catch (error) {
+      console.error("Ошибка при удалении корзины:", error);
+      throw new Error("Не удалось удалить корзину");
+    }
+  }
 }
