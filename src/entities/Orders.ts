@@ -8,6 +8,7 @@ export class Orders extends BaseModel {
     id: number;
     price: number;
     name: string;
+    photo: string;
     quantity: number;
   }[];
 
@@ -26,6 +27,6 @@ export class Orders extends BaseModel {
   @Column({ type: "int" })
   restaurant!: number;
 
-  @Column({ type: "varchar", default:"pending"})
+  @Column({ type: "varchar", default: "pending" })
   status!: string;
 }
