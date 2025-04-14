@@ -1,3 +1,4 @@
+import { Raw } from "typeorm";
 import { AppDataSource } from "../config/database/data-source";
 import { Orders } from "../entities/Orders";
 
@@ -32,7 +33,11 @@ export class OrderService {
 
   static async findOrdersByVendorId(id: number, page: number, limit: number): Promise<PaginatedOrders> {
     const [orders, total] = await this.OrdersRepo.findAndCount({
-      where: { restaurant: id },
+      // where: { restaurant: id },
+      where: {
+        restaurant: Raw((alias) => `${alias} @> '{"id": ${id}}'`), // Используем Raw для поиска в jsonb
+      },
+      // relations: ["restaurant"],
       order: { created_at: "DESC" },
       skip: (page - 1) * limit,
       take: limit,

@@ -3,6 +3,7 @@ import { checkAllowedFields, checkBodyFields } from "../utils/validationUtils";
 
 const bodyAllowedFields = ["created_by", "lat", "long", "user_id", "restaurant", "products", "status"];
 const productAllowedFields = ["id", "price", "quantity", "name", "photo"];
+const restaurantAllowedFields = ["id", "name", "photo", "address", "phone"];
 
 export const orderValidation: ValidationChain[] = [
   body("*").custom((_, { req }) => checkBodyFields(req.body, bodyAllowedFields)),
@@ -14,5 +15,26 @@ export const orderValidation: ValidationChain[] = [
   // body("products.*.photo").isString().withMessage("Отсутсвует поля photo"),
 
   body("user_id").isInt({ min: 1 }).withMessage("User id is required"),
-  body("restaurant").isInt({ min: 1 }).withMessage("Restaurant is required"),
+  // body("restaurant").custom((restaurant) => checkAllowedFields(restaurant, restaurantAllowedFields)),
+  body("restaurant")
+    .isObject()
+    .withMessage("Restaurant must be an object")
+    .custom((restaurant) => {
+      if (!restaurant.id || typeof restaurant.id !== "number" || restaurant.id < 1) {
+        throw new Error("Restaurant ID must be a positive number");
+      }
+      if (!restaurant.name || typeof restaurant.name !== "string") {
+        throw new Error("Restaurant name is required and must be a string");
+      }
+      if (!restaurant.photo || typeof restaurant.photo !== "string") {
+        throw new Error("Restaurant photo is required and must be a string");
+      }
+      if (!restaurant.address || typeof restaurant.address !== "string") {
+        throw new Error("Restaurant address is required and must be a string");
+      }
+      if (!restaurant.phone || typeof restaurant.phone !== "number") {
+        throw new Error("Restaurant phone is required and must be a number");
+      }
+      return true;
+    }),
 ];

@@ -11,5 +11,5 @@ export class Cart extends BaseModel {
   restaurant!: number;
 
   @Column("jsonb")
-  products!: any[]; 
+  products!: any[];
 }

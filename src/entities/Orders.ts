@@ -24,9 +24,15 @@ export class Orders extends BaseModel {
   @Column({ type: "int" })
   user_id!: number;
 
-  @Column({ type: "int" })
-  restaurant!: number;
+  @Column({ type: "jsonb", nullable: true })
+  restaurant!: {
+    id: number;
+    name: string;
+    photo: string;
+    address: string;
+    phone: number;
+  };
 
-  @Column({ type: "varchar", default: "pending" })
+  @Column({ type: "varchar", default: "new" })
   status!: string;
 }

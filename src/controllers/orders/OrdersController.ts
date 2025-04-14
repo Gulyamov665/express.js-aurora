@@ -7,6 +7,7 @@ import { TypedRequest } from "./types";
 import { io } from "../..";
 import { CartService } from "../../services/CartService";
 import axios from "axios";
+import { body } from "express-validator";
 
 export interface CreateOrderDTO {
   created_by: number;
@@ -36,13 +37,15 @@ export const getAllOrders = async (req: Request, res: Response) => {
 export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
   try {
     const data = req.body;
+    let createdByFullName = "Unknown";
+    try {
+      const userResponse = await axios.get(`https://aurora-api.uz/api/v1/auth/user/${data.created_by}`);
+      const user = userResponse.data;
+      createdByFullName = `${user.first_name} ${user.last_name}`;
+    } catch (axiosError) {
+      console.error("❌ Ошибка при получении пользователя:", axiosError);
+    }
 
-    // Получаем пользователя
-    const userResponse = await axios.get(`https://aurora-api.uz/api/v1/auth/user/${data.created_by}`);
-    const user = userResponse.data;
-    const createdByFullName = `${user.first_name} ${user.last_name}`;
-
-    // Вычисляем общую стоимость
     const totalPrice = calcTotalPrice(data.products);
     const orderData = {
       ...data,
@@ -57,7 +60,7 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
     if (res.statusCode === 200) {
       const cartDeleted = await CartService.removeCartByUserAndRestaurant({
         user_id: data.user_id,
-        restaurant: data.restaurant,
+        restaurant: data.restaurant.id,
       }); // Удаляем корзину по cart_id
 
       if (!cartDeleted) {
