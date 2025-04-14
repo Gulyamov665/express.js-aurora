@@ -33,11 +33,10 @@ export class OrderService {
 
   static async findOrdersByVendorId(id: number, page: number, limit: number): Promise<PaginatedOrders> {
     const [orders, total] = await this.OrdersRepo.findAndCount({
-      // where: { restaurant: id },
       where: {
         restaurant: Raw((alias) => `${alias} @> '{"id": ${id}}'`), // Используем Raw для поиска в jsonb
       },
-      // relations: ["restaurant"],
+
       order: { created_at: "DESC" },
       skip: (page - 1) * limit,
       take: limit,
@@ -62,5 +61,9 @@ export class OrderService {
     }
     Object.assign(order, updateData);
     return this.OrdersRepo.save(order);
+  }
+
+  static async findOrderById(id: number): Promise<Orders | null> {
+    return await this.OrdersRepo.findOneBy({ id });
   }
 }

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createOrder,
+  findOrderById,
   getAllOrders,
   getOrderById,
   getOrderByUserId,
@@ -18,3 +19,4 @@ orderRoutes.post("/", authenticateJWT, orderValidation, validate, createOrder);
 orderRoutes.get("/:id", authenticateJWT, getOrderById);
 orderRoutes.put("/update/:id", updateOrder);
 orderRoutes.get("/me/:id", authenticateJWT, getOrderByUserId);
+orderRoutes.get("/getOrderById/:id", authenticateJWT, findOrderById);

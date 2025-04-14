@@ -7,7 +7,6 @@ import { TypedRequest } from "./types";
 import { io } from "../..";
 import { CartService } from "../../services/CartService";
 import axios from "axios";
-import { body } from "express-validator";
 
 export interface CreateOrderDTO {
   created_by: number;
@@ -112,6 +111,16 @@ export const updateOrder = async (req: Request, res: Response) => {
     const updatedOrder = await OrderService.updateOrder(id, updateData);
     io.emit("update_order", updatedOrder);
     res.status(200).json(updatedOrder);
+  } catch (error) {
+    handleError(res, error, 400);
+  }
+};
+
+export const findOrderById = async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  try {
+    const order = await OrderService.findOrderById(id);
+    res.status(200).json(order);
   } catch (error) {
     handleError(res, error, 400);
   }
