@@ -24,6 +24,9 @@ export class Orders extends BaseModel {
   @Column({ type: "int" })
   user_id!: number;
 
+  @Column({ type: "int", nullable: true })
+  orders_chat_id!: string;
+
   @Column({ type: "jsonb", nullable: true })
   restaurant!: {
     id: number;

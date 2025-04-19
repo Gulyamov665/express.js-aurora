@@ -1,9 +1,18 @@
 import { body, ValidationChain } from "express-validator";
 import { checkAllowedFields, checkBodyFields } from "../utils/validationUtils";
 
-const bodyAllowedFields = ["created_by", "lat", "long", "user_id", "restaurant", "products", "status"];
+const bodyAllowedFields = [
+  "created_by",
+  "lat",
+  "long",
+  "user_id",
+  "restaurant",
+  "products",
+  "status",
+  "orders_chat_id",
+];
 const productAllowedFields = ["id", "price", "quantity", "name", "photo"];
-const restaurantAllowedFields = ["id", "name", "photo", "address", "phone"];
+// const restaurantAllowedFields = ["id", "name", "photo", "address", "phone"];
 
 export const orderValidation: ValidationChain[] = [
   body("*").custom((_, { req }) => checkBodyFields(req.body, bodyAllowedFields)),
@@ -12,10 +21,9 @@ export const orderValidation: ValidationChain[] = [
   body("products.*.price").isFloat({ min: 0 }).withMessage("Цена продукта должна быть положительным числом"),
   body("products.*.name").isString().withMessage("Отсутсвует поля name"),
   body("products.*.quantity").isInt({ min: 1 }).withMessage("Количество должно быть минимум 1"),
-  // body("products.*.photo").isString().withMessage("Отсутсвует поля photo"),
 
   body("user_id").isInt({ min: 1 }).withMessage("User id is required"),
-  // body("restaurant").custom((restaurant) => checkAllowedFields(restaurant, restaurantAllowedFields)),
+
   body("restaurant")
     .isObject()
     .withMessage("Restaurant must be an object")
