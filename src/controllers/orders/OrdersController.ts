@@ -38,7 +38,7 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
     const data = req.body;
     let createdByFullName = "Unknown";
     try {
-      const userResponse = await axios.get(`https://aurora-api.uz/api/v1/auth/user/${data.created_by}`);
+      const userResponse = await axios.get(`https://new.aurora-api.uz/api/v1/auth/user/${data.created_by}`);
       const user = userResponse.data;
       createdByFullName = `${user.first_name} ${user.last_name}`;
     } catch (axiosError) {
