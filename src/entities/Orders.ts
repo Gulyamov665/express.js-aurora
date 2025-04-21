@@ -33,7 +33,7 @@ export class Orders extends BaseModel {
     name: string;
     photo: string;
     address: string;
-    phone: number;
+    phone: string;
   };
 
   @Column({ type: "varchar", default: "new" })

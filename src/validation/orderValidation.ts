@@ -40,8 +40,8 @@ export const orderValidation: ValidationChain[] = [
       if (!restaurant.address || typeof restaurant.address !== "string") {
         throw new Error("Restaurant address is required and must be a string");
       }
-      if (!restaurant.phone || typeof restaurant.phone !== "number") {
-        throw new Error("Restaurant phone is required and must be a number");
+      if (!restaurant.phone || typeof restaurant.phone !== "string") {
+        throw new Error("Restaurant phone is required and must be a string");
       }
       return true;
     }),
