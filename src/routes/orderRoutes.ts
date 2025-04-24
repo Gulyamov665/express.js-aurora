@@ -5,6 +5,7 @@ import {
   getAllOrders,
   getOrderById,
   getOrderByUserId,
+  ordersByDateRange,
   updateOrder,
 } from "../controllers/orders/OrdersController";
 import { orderValidation } from "../validation/orderValidation";
@@ -20,3 +21,4 @@ orderRoutes.get("/:id", authenticateJWT, getOrderById);
 orderRoutes.put("/update/:id", updateOrder);
 orderRoutes.get("/me/:id", authenticateJWT, getOrderByUserId);
 orderRoutes.get("/getOrderById/:id", authenticateJWT, findOrderById);
+orderRoutes.post("/ordersByDateRange", authenticateJWT, ordersByDateRange);

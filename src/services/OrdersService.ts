@@ -1,4 +1,4 @@
-import { Raw } from "typeorm";
+import { Between, Raw } from "typeorm";
 import { AppDataSource } from "../config/database/data-source";
 import { Orders } from "../entities/Orders";
 
@@ -65,5 +65,20 @@ export class OrderService {
 
   static async findOrderById(id: number): Promise<Orders | null> {
     return await this.OrdersRepo.findOneBy({ id });
+  }
+
+  static async getOrdersByDateRange(startDateStr: string, endDateStr: string, restaurantId: number): Promise<Orders[]> {
+    const startDate = new Date(startDateStr);
+    const endDate = new Date(endDateStr);
+
+    const orders = await this.OrdersRepo.find({
+      where: {
+        created_at: Between(startDate, endDate),
+        restaurant: Raw((alias) => `${alias} @> '{"id": ${restaurantId}}'`),
+      },
+      order: { created_at: "DESC" },
+    });
+
+    return orders;
   }
 }

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { OrderService } from "../../services/OrdersService";
 import { handleError } from "../../utils/handlerError";
-import { calcTotalPrice, Product } from "../../utils/countTotalPrice";
+import { calcTotalPrice, Product, totalSum } from "../../utils/countTotalPrice";
 import { Orders } from "../../entities/Orders";
 import { TypedRequest } from "./types";
 import { io } from "../..";
@@ -121,6 +121,25 @@ export const findOrderById = async (req: Request, res: Response) => {
   try {
     const order = await OrderService.findOrderById(id);
     res.status(200).json(order);
+  } catch (error) {
+    handleError(res, error, 400);
+  }
+};
+
+export const ordersByDateRange = async (req: Request, res: Response) => {
+  const { startDate, endDate, restaurantId } = req.body;
+
+  if (!restaurantId) {
+    res.status(400).json({ message: "restaurantId is required" });
+    return;
+  }
+
+  try {
+    const orders = await OrderService.getOrdersByDateRange(startDate, endDate, restaurantId);
+    const sum = totalSum(orders);
+
+    console.log(sum);
+    res.status(200).json({ orders, sum });
   } catch (error) {
     handleError(res, error, 400);
   }
