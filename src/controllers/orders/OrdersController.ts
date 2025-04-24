@@ -138,8 +138,7 @@ export const ordersByDateRange = async (req: Request, res: Response) => {
     const orders = await OrderService.getOrdersByDateRange(startDate, endDate, restaurantId);
     const sum = totalSum(orders);
 
-    console.log(sum);
-    res.status(200).json({ orders, sum });
+    res.status(200).json({ orders, sum, quantity: orders.length });
   } catch (error) {
     handleError(res, error, 400);
   }
