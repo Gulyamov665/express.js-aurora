@@ -137,8 +137,9 @@ export const ordersByDateRange = async (req: Request, res: Response) => {
   try {
     const orders = await OrderService.getOrdersByDateRange(startDate, endDate, restaurantId);
     const sum = totalSum(orders);
+    const canceled = orders.filter((order) => order.status === "canceled").length;
 
-    res.status(200).json({ orders, sum, quantity: orders.length });
+    res.status(200).json({ orders, sum, quantity: orders.length, canceled });
   } catch (error) {
     handleError(res, error, 400);
   }
