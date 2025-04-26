@@ -3,7 +3,7 @@ import {
   createOrder,
   findOrderById,
   getAllOrders,
-  // getOrderById,
+  getOrderById,
   getOrderByUserId,
   getOrdersByStatus,
   ordersByDateRange,
@@ -19,7 +19,7 @@ export const orderRoutes = Router();
 orderRoutes.get("/", authenticateJWT, getAllOrders);
 orderRoutes.post("/", authenticateJWT, orderValidation, validate, createOrder);
 orderRoutes.get("/status", authenticateJWT, getOrdersByStatus);
-// orderRoutes.get("/:id", authenticateJWT, getOrderById);
+orderRoutes.get("/:id", authenticateJWT, getOrderById);
 orderRoutes.put("/update/:id", updateOrder);
 orderRoutes.get("/me/:id", authenticateJWT, getOrderByUserId);
 orderRoutes.get("/getOrderById/:id", authenticateJWT, findOrderById);
