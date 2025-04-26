@@ -82,6 +82,7 @@ const notifyAboutNewOrder = async (order: any) => {
 };
 
 export const getOrderById = async (req: Request, res: Response) => {
+  console.log("first");
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string);
   const id = Number(req.params.id);
@@ -140,6 +141,20 @@ export const ordersByDateRange = async (req: Request, res: Response) => {
     const canceled = orders.filter((order) => order.status === "canceled").length;
 
     res.status(200).json({ orders, sum, quantity: orders.length, canceled });
+  } catch (error) {
+    handleError(res, error, 400);
+  }
+};
+
+export const getOrdersByStatus = async (req: Request, res: Response) => {
+  const status = req.query.status as string;
+  if (!status) {
+    res.status(400).json({ message: "Status is required" });
+    return;
+  }
+  try {
+    const orders = await OrderService.getOrderByStatus(status);
+    res.status(200).json(orders);
   } catch (error) {
     handleError(res, error, 400);
   }

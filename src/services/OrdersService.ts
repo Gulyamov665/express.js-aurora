@@ -50,6 +50,17 @@ export class OrderService {
     };
   }
 
+  static async getOrderByStatus(status: string): Promise<Orders[]> {
+    const order = await this.OrdersRepo.find({
+      where: { status },
+      order: { created_at: "DESC" },
+    });
+    if (!order) {
+      throw new Error("Order not found");
+    }
+    return order;
+  }
+
   static async findOrderByUserId(id: number): Promise<Orders[]> {
     return await this.OrdersRepo.find({ where: { user_id: id } });
   }

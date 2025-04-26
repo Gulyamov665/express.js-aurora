@@ -12,7 +12,6 @@ const bodyAllowedFields = [
   "orders_chat_id",
 ];
 const productAllowedFields = ["id", "price", "quantity", "name", "photo"];
-// const restaurantAllowedFields = ["id", "name", "photo", "address", "phone"];
 
 export const orderValidation: ValidationChain[] = [
   body("*").custom((_, { req }) => checkBodyFields(req.body, bodyAllowedFields)),
