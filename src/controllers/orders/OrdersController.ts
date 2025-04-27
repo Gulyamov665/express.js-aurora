@@ -73,7 +73,7 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
   }
 };
 
-const notifyAboutNewOrder = async (order: any) => {
+const notifyAboutNewOrder = async (order: Orders) => {
   try {
     await axios.post("https://notify.aurora-api.uz/fastapi/new-order", order);
   } catch (error) {
@@ -109,10 +109,30 @@ export const updateOrder = async (req: Request, res: Response) => {
 
   try {
     const updatedOrder = await OrderService.updateOrder(id, updateData);
+    if (!updatedOrder) {
+      res.status(404).json({ message: "Order not found" });
+      return;
+    }
     io.emit("update_order", updatedOrder);
+    notifyAboutOrderStatusChange(updatedOrder);
     res.status(200).json(updatedOrder);
   } catch (error) {
     handleError(res, error, 400);
+  }
+};
+const notifyAboutOrderStatusChange = async (order: Orders) => {
+  try {
+    const data = {
+      id: order.id,
+      orders_chat_id: order.orders_chat_id,
+      courier: {
+        first_name: "John",
+        last_name: "Doe",
+      },
+    };
+    await axios.post("https://notify.aurora-api.uz/fastapi/accept-order/", data);
+  } catch (error) {
+    console.error("Ошибка при отправке уведомления:", error);
   }
 };
 
