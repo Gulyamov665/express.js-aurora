@@ -114,7 +114,7 @@ export const updateOrder = async (req: Request, res: Response) => {
       return;
     }
     io.emit("update_order", updatedOrder);
-    notifyAboutOrderStatusChange(updatedOrder);
+    if (updatedOrder.status === "prepare") notifyAboutOrderStatusChange(updatedOrder);
     res.status(200).json(updatedOrder);
   } catch (error) {
     handleError(res, error, 400);
@@ -130,7 +130,7 @@ const notifyAboutOrderStatusChange = async (order: Orders) => {
         last_name: "Doe",
       },
     };
-    await axios.post("https://notify.aurora-api.uz/fastapi/accept-order/", data);
+    await axios.post("https://notify.aurora-api.uz/fastapi/accept-order", data);
   } catch (error) {
     console.error("Ошибка при отправке уведомления:", error);
   }
