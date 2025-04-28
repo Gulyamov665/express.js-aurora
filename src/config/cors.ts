@@ -5,7 +5,7 @@ const corsMiddleware = cors({
     "http://localhost:3000",
     "http://localhost:5173",
     "https://stage.aurora-app.uz",
-    "https://www.aurora-app.uz/",
+    "https://www.aurora-app.uz",
     "https://aurora-3avt-git-feature-ts-gulyamov-mirzogulyams-projects.vercel.app/",
   ],
 
@@ -19,7 +19,7 @@ export const WebSocketCors = {
     origin: [
       "http://localhost:3000",
       "http://localhost:5173",
-      "https://www.aurora-app.uz/",
+      "https://www.aurora-app.uz",
       "https://stage.aurora-app.uz",
       "https://aurora-3avt-git-feature-ts-gulyamov-mirzogulyams-projects.vercel.app",
     ],
