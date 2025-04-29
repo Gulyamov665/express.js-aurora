@@ -2,6 +2,7 @@
 import admin from "./firebase";
 
 export const sendPushToCourier = async (deviceToken: string, orderId: number) => {
+  console.log(deviceToken, orderId);
   const message = {
     notification: {
       title: "Новый заказ",
@@ -12,8 +13,8 @@ export const sendPushToCourier = async (deviceToken: string, orderId: number) =>
 
   try {
     const response = await admin.messaging().send(message);
-    console.log("Уведомление отправлено:", response);
+    console.log("Уведомление отправлено:");
   } catch (error) {
-    console.error("Ошибка отправки уведомления:", error);
+    console.error("Ошибка отправки уведомления:");
   }
 };

@@ -118,8 +118,9 @@ export const updateOrder = async (req: Request, res: Response) => {
     if (updatedOrder.status === "prepare") {
       sendPushToCourier(
         "dgu1vaFUQ2KjELkLZAJNr3:APA91bEbDyWQc-xpYB_A_jqH4tdZWQYGrm1vO_we3RPfkbqcYzIN0CjYUkyYlLAxBF1N0UmE5-tKoLT78BMvSdzn1lFpLtSD9pT8FHyATHhibcawsmQlbbk",
-        updatedOrder.id
+        id
       );
+
       notifyAboutOrderStatusChange(updatedOrder);
     }
     res.status(200).json(updatedOrder);
