@@ -115,12 +115,13 @@ export const updateOrder = async (req: Request, res: Response) => {
       return;
     }
     io.emit("update_order", updatedOrder);
-    if (updatedOrder.status === "prepare") {
+    if (updatedOrder.status === "awaiting_courier") {
       sendPushToCourier(
         "dgu1vaFUQ2KjELkLZAJNr3:APA91bEbDyWQc-xpYB_A_jqH4tdZWQYGrm1vO_we3RPfkbqcYzIN0CjYUkyYlLAxBF1N0UmE5-tKoLT78BMvSdzn1lFpLtSD9pT8FHyATHhibcawsmQlbbk",
         id
       );
-
+    }
+    if (updatedOrder.status === "prepare") {
       notifyAboutOrderStatusChange(updatedOrder);
     }
     res.status(200).json(updatedOrder);
