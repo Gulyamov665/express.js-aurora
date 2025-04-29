@@ -48,3 +48,4 @@ out/
 # Misc
 .DS_Store
 Thumbs.db
+src/config/firebase/aurora-couriers-firebase-adminsdk-fbsvc-7f82fcbb50.json

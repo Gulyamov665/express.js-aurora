@@ -7,6 +7,7 @@ import { TypedRequest } from "./types";
 import { io } from "../..";
 import { CartService } from "../../services/CartService";
 import axios from "axios";
+import { sendPushToCourier } from "../../config/firebase/sendPushHandler";
 
 export interface CreateOrderDTO {
   created_by: number;
@@ -114,7 +115,13 @@ export const updateOrder = async (req: Request, res: Response) => {
       return;
     }
     io.emit("update_order", updatedOrder);
-    if (updatedOrder.status === "prepare") notifyAboutOrderStatusChange(updatedOrder);
+    if (updatedOrder.status === "prepare") {
+      sendPushToCourier(
+        "dgu1vaFUQ2KjELkLZAJNr3:APA91bEbDyWQc-xpYB_A_jqH4tdZWQYGrm1vO_we3RPfkbqcYzIN0CjYUkyYlLAxBF1N0UmE5-tKoLT78BMvSdzn1lFpLtSD9pT8FHyATHhibcawsmQlbbk",
+        updatedOrder.id
+      );
+      notifyAboutOrderStatusChange(updatedOrder);
+    }
     res.status(200).json(updatedOrder);
   } catch (error) {
     handleError(res, error, 400);
