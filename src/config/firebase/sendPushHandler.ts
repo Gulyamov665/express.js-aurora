@@ -2,15 +2,22 @@
 import admin from "./firebase";
 
 export const sendPushToCourier = async (deviceToken: string, orderId: number) => {
-
-  const channel = []
+  const channel = [];
 
   const message = {
+    token: deviceToken,
     notification: {
       title: "Новый заказ",
       body: `Заказ #${orderId} ожидает подтверждения`,
     },
-    token: deviceToken,
+    android: {
+      notification: {
+        channelId: "default", // должен совпадать с createChannel в notifee
+        vibrateTimingsMillis: [300, 500],
+        priority: "high" as "high",
+        sound: "default",
+      },
+    },
   };
 
   try {

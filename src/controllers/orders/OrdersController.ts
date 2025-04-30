@@ -16,6 +16,11 @@ export interface CreateOrderDTO {
   restaurant: number;
 }
 
+const tempTokens = [
+  "exgRT44MSo-c7VaXWmyRuB:APA91bGoDZAu6Sii54T7fVdykUyTvfRSDuwuX4J4Arh5bUYmFulMm6SuQpvmFL79Zl4MKN-DUpCGhL89iCZW-M8NCJ7mY9gzlhoYQBmm2MTVuNNXhu1sy-I",
+  "cavNv-27Tb6J400zZZR_CN:APA91bEPi5hoSf4wHgJWh7fYDDiQnfl3fBxZVZKkTls3Mf05FbASChY13ZsEg8DNiXaJECryYGcxAO4UddYB1wqKe0I7sRADZ7u3dJJI4JkmLf4Hl7UtfTE",
+];
+
 export const getAllOrders = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 130;
@@ -104,10 +109,7 @@ export const updateOrder = async (req: Request, res: Response) => {
     io.emit("update_order", updatedOrder);
 
     if (updatedOrder.status === "awaiting_courier") {
-      sendPushToCourier(
-        "dgu1vaFUQ2KjELkLZAJNr3:APA91bEbDyWQc-xpYB_A_jqH4tdZWQYGrm1vO_we3RPfkbqcYzIN0CjYUkyYlLAxBF1N0UmE5-tKoLT78BMvSdzn1lFpLtSD9pT8FHyATHhibcawsmQlbbk",
-        id
-      );
+      tempTokens.forEach((token) => sendPushToCourier(token, id));
     }
     if (updatedOrder.status === "prepare") {
       notifyAboutOrderStatusChange(updatedOrder);
