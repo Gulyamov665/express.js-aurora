@@ -5,9 +5,9 @@ import { calcTotalPrice, Product, totalSum } from "../../utils/countTotalPrice";
 import { Orders } from "../../entities/Orders";
 import { TypedRequest } from "./types";
 import { io } from "../..";
-import { CartService } from "../../services/CartService";
-import axios from "axios";
 import { sendPushToCourier } from "../../config/firebase/sendPushHandler";
+import { CartService } from "../../services/CartService";
+import { getUserInfo, notifyAboutNewOrder, notifyAboutOrderStatusChange } from "../../api/api";
 
 export interface CreateOrderDTO {
   created_by: number;
@@ -37,23 +37,18 @@ export const getAllOrders = async (req: Request, res: Response) => {
 export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
   try {
     const data = req.body;
-    let createdByFullName = "Unknown";
-    try {
-      const userResponse = await axios.get(`https://new.aurora-api.uz/api/v1/auth/user/${data.created_by}`);
-      const user = userResponse.data;
-      createdByFullName = `${user.first_name} ${user.last_name}`;
-    } catch (axiosError) {
-      console.error("❌ Ошибка при получении пользователя:", axiosError);
-    }
+    const { fullName: createdByFullName, location } = await getUserInfo(Number(data?.created_by));
 
     const totalPrice = calcTotalPrice(data.products);
     const orderData = {
       ...data,
       total_price: totalPrice,
       created_by: createdByFullName,
+      location,
     };
 
     const newOrder = await OrderService.createOrder(orderData);
+
     io.emit("new_order", newOrder);
     notifyAboutNewOrder(newOrder);
 
@@ -61,24 +56,16 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
       const cartDeleted = await CartService.removeCartByUserAndRestaurant({
         user_id: data.user_id,
         restaurant: data.restaurant.id,
-      }); // Удаляем корзину по cart_id
+      });
 
+      // Удаляем корзину по cart_id
       if (!cartDeleted) {
         console.warn(`Корзина с ID ${data} не найдена или не была удалена.`);
       }
     }
-
     res.status(201).json(newOrder);
   } catch (error) {
     return handleError(res, error, 400);
-  }
-};
-
-const notifyAboutNewOrder = async (order: Orders) => {
-  try {
-    await axios.post("https://notify.aurora-api.uz/fastapi/new-order", order);
-  } catch (error) {
-    console.error("Ошибка при отправке уведомления:", error);
   }
 };
 
@@ -115,6 +102,7 @@ export const updateOrder = async (req: Request, res: Response) => {
       return;
     }
     io.emit("update_order", updatedOrder);
+
     if (updatedOrder.status === "awaiting_courier") {
       sendPushToCourier(
         "dgu1vaFUQ2KjELkLZAJNr3:APA91bEbDyWQc-xpYB_A_jqH4tdZWQYGrm1vO_we3RPfkbqcYzIN0CjYUkyYlLAxBF1N0UmE5-tKoLT78BMvSdzn1lFpLtSD9pT8FHyATHhibcawsmQlbbk",
@@ -127,21 +115,6 @@ export const updateOrder = async (req: Request, res: Response) => {
     res.status(200).json(updatedOrder);
   } catch (error) {
     handleError(res, error, 400);
-  }
-};
-const notifyAboutOrderStatusChange = async (order: Orders) => {
-  try {
-    const data = {
-      id: order.id,
-      orders_chat_id: order.orders_chat_id,
-      courier: {
-        first_name: "John",
-        last_name: "Doe",
-      },
-    };
-    await axios.post("https://notify.aurora-api.uz/fastapi/accept-order", data);
-  } catch (error) {
-    console.error("Ошибка при отправке уведомления:", error);
   }
 };
 

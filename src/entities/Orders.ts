@@ -1,5 +1,6 @@
 import { Column, Entity } from "typeorm";
 import { BaseModel } from "./BaseModel";
+import { UserLocationType } from "../controllers/orders/types";
 
 @Entity("orders")
 export class Orders extends BaseModel {
@@ -36,6 +37,9 @@ export class Orders extends BaseModel {
     phone: string;
   };
 
+  @Column({ type: "jsonb", nullable: true })
+  location!: UserLocationType;
+  
   @Column({ type: "varchar", default: "new" })
   status!: string;
 }

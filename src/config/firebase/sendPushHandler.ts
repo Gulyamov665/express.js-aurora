@@ -2,7 +2,9 @@
 import admin from "./firebase";
 
 export const sendPushToCourier = async (deviceToken: string, orderId: number) => {
-  console.log(deviceToken, orderId);
+
+  const channel = []
+
   const message = {
     notification: {
       title: "Новый заказ",
