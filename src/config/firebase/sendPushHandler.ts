@@ -15,7 +15,7 @@ export const sendPushToCourier = async (deviceToken: string, orderId: number) =>
         channelId: "aurora", // должен совпадать с createChannel в notifee
         vibrateTimingsMillis: [300, 500],
         priority: "high" as "high",
-        sound: "default",
+        sound: "my_sound",
       },
     },
   };
