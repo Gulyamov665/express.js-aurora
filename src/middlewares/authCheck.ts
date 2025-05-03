@@ -22,7 +22,7 @@ export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: 
     jwt.verify(token, JWT_SECRET, (err, user) => {
       if (err) {
         return res
-          .status(403)
+          .status(401)
           .json({ message: "доступ к запрашиваемой странице запрещен или у вас нет прав на просмотр контента" }); // Forbidden
       }
 
@@ -30,6 +30,6 @@ export const authenticateJWT = (req: AuthenticatedRequest, res: Response, next: 
       next();
     });
   } else {
-    res.sendStatus(401); // Unauthorized
+    res.sendStatus(403); // Unauthorized
   }
 };
