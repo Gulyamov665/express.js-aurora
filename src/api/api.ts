@@ -9,7 +9,8 @@ interface UserInfo {
 
 export async function getUserInfo(userId: number): Promise<UserInfo> {
   try {
-    const userResponse = await axios.get<UserInfoType>(`https://new.aurora-api.uz/api/v1/auth/user/${userId}`);
+    // const userResponse = await axios.get<UserInfoType>(`https://new.aurora-api.uz/api/v1/auth/user/${userId}`);
+    const userResponse = await axios.get<UserInfoType>(`https://stage.aurora-api.uz/api/v1/auth/user/${userId}`);
     const user = userResponse.data;
 
     return {

@@ -39,7 +39,14 @@ export class Orders extends BaseModel {
 
   @Column({ type: "jsonb", nullable: true })
   location!: UserLocationType;
-  
+
   @Column({ type: "varchar", default: "new" })
   status!: string;
+
+  @Column({ type: "jsonb", nullable: true })
+  courier!: {
+    id: number;
+    username: string;
+    phone_number: string;
+  };
 }
