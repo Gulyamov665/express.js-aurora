@@ -112,6 +112,7 @@ export const updateOrder = async (req: Request, res: Response) => {
       tempTokens.forEach((token) => sendPushToCourier(token, id));
     }
     if (updatedOrder.status === "prepare") {
+      updatedOrder.courier.accepted_at = new Date();
       notifyAboutOrderStatusChange(updatedOrder);
     }
     res.status(200).json(updatedOrder);

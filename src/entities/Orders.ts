@@ -48,5 +48,6 @@ export class Orders extends BaseModel {
     id: number;
     username: string;
     phone_number: string;
+    accepted_at: Date;
   };
 }
