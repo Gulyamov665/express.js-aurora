@@ -163,3 +163,14 @@ export const getOrdersByStatus = async (req: Request, res: Response) => {
     handleError(res, error, 400);
   }
 };
+
+export const getOrderByCourierId = async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+
+  try {
+    const orders = await OrderService.findOrdersByCourierId(id);
+    res.status(200).json(orders);
+  } catch (error) {
+    handleError(res, error, 400);
+  }
+};

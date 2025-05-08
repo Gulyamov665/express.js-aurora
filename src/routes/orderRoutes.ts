@@ -3,6 +3,7 @@ import {
   createOrder,
   findOrderById,
   getAllOrders,
+  getOrderByCourierId,
   getOrderById,
   getOrderByUserId,
   getOrdersByStatus,
@@ -24,3 +25,4 @@ orderRoutes.put("/update/:id", updateOrder);
 orderRoutes.get("/me/:id", getOrderByUserId);
 orderRoutes.get("/getOrderById/:id", findOrderById);
 orderRoutes.post("/ordersByDateRange", ordersByDateRange);
+orderRoutes.get("/getCourierOrders/:id", getOrderByCourierId);

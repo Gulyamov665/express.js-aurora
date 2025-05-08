@@ -92,4 +92,13 @@ export class OrderService {
 
     return orders;
   }
+
+  static async findOrdersByCourierId(courierId: number): Promise<Orders[]> {
+    return this.OrdersRepo.find({
+      where: {
+        courier: Raw((alias) => `${alias} @> '{"id": ${courierId}}'`),
+      },
+      order: { created_at: "DESC" },
+    });
+  }
 }
