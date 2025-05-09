@@ -1,6 +1,7 @@
 import { Column, Entity } from "typeorm";
 import { BaseModel } from "./BaseModel";
 import { UserLocationType } from "../controllers/orders/types";
+import { DistanceResult } from "../api/types";
 
 @Entity("orders")
 export class Orders extends BaseModel {
@@ -50,4 +51,6 @@ export class Orders extends BaseModel {
     phone_number: string;
     accepted_at: Date;
   };
+  @Column({ type: "jsonb", nullable: true })
+  destination!: DistanceResult;
 }

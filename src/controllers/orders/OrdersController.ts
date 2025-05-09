@@ -7,7 +7,7 @@ import { TypedRequest } from "./types";
 import { io } from "../..";
 import { sendPushToCourier } from "../../config/firebase/sendPushHandler";
 import { CartService } from "../../services/CartService";
-import { getUserInfo, notifyAboutNewOrder, notifyAboutOrderStatusChange } from "../../api/api";
+import { getDistance, getUserInfo, notifyAboutNewOrder, notifyAboutOrderStatusChange } from "../../api/api";
 
 export interface CreateOrderDTO {
   created_by: number;
@@ -110,14 +110,25 @@ export const updateOrder = async (req: Request, res: Response) => {
 
     if (updatedOrder.status === "awaiting_courier") {
       tempTokens.forEach((token) => sendPushToCourier(token, id));
+      const distance = await getDistance(
+        39.805718,
+        64.50184,
+        Number(updatedOrder.location.lat),
+        Number(updatedOrder.location.long)
+      );
+
+      updatedOrder.courier.accepted_at = new Date();
+      if (distance?.distance) {
+        updatedOrder.destination = distance;
+        // updatedOrder.destination.duration = distance.duration;
+      }
     }
     if (updatedOrder.status === "prepare") {
-      updatedOrder.courier.accepted_at = new Date();
       notifyAboutOrderStatusChange(updatedOrder);
     }
     res.status(200).json(updatedOrder);
   } catch (error) {
-    handleError(res, error, 400);
+    handleError(res, error);
   }
 };
 

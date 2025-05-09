@@ -1,6 +1,10 @@
 import axios from "axios";
 import { UserInfoType, UserLocationType } from "../controllers/orders/types";
 import { Orders } from "../entities/Orders";
+import { DistanceMatrixResponse, DistanceResult } from "./types";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 interface UserInfo {
   fullName: string;
@@ -44,5 +48,51 @@ export const notifyAboutOrderStatusChange = async (order: Orders) => {
     await axios.post("https://notify.aurora-api.uz/fastapi/accept-order", data);
   } catch (error) {
     console.error("Ошибка при отправке уведомления:", error);
+  }
+};
+
+const API_KEY = process.env.GOOGLE_API_KEY;
+
+if (!API_KEY) {
+  throw new Error("API ключ не найден в .env!");
+}
+
+export const getDistance = async (
+  originLat: number,
+  originLng: number,
+  destLat: number,
+  destLng: number
+): Promise<DistanceResult | null> => {
+  try {
+    const response = await axios.get<DistanceMatrixResponse>(
+      "https://maps.googleapis.com/maps/api/distancematrix/json",
+      {
+        params: {
+          origins: `${originLat},${originLng}`,
+          destinations: `${destLat},${destLng}`,
+          key: API_KEY,
+        },
+      }
+    );
+
+    const data = response.data;
+    const element = data.rows[0].elements[0];
+
+    if (element.status !== "OK") {
+      console.warn("Ошибка в элементе:", element.status);
+      return null;
+    }
+
+    return {
+      distance: element.distance.text,
+      duration: element.duration.text,
+    };
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      console.error("Axios ошибка:", error.response?.data || error.message);
+    } else {
+      console.error("Неизвестная ошибка:", error);
+    }
+    return null;
   }
 };
