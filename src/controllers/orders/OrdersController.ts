@@ -99,7 +99,9 @@ export const getOrderByUserId = async (req: Request, res: Response) => {
 export const updateOrder = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const updateData = req.body;
-  const destination = await getDistance(39.805718, 64.50184, 39.746765138491405, 64.41126197576524);
+  const order = await OrderService.getOrderById(id);
+
+  const destination = await getDistance(39.805718, 64.50184, Number(order?.location.lat), Number(order?.location.long));
   const data = { ...updateData, destination };
 
   try {

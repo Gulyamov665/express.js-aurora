@@ -101,4 +101,8 @@ export class OrderService {
       order: { created_at: "DESC" },
     });
   }
+
+  static async getOrderById(id: number): Promise<Orders | null> {
+    return await this.OrdersRepo.findOneBy({ id });
+  }
 }
