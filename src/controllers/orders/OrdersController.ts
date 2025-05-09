@@ -101,7 +101,12 @@ export const updateOrder = async (req: Request, res: Response) => {
   const updateData = req.body;
   const order = await OrderService.getOrderById(id);
 
-  const destination = await getDistance(39.805718, 64.50184, Number(order?.location.lat), Number(order?.location.long));
+  const destination = await getDistance(
+    Number(order?.restaurant.lat),
+    Number(order?.restaurant.long),
+    Number(order?.location.lat),
+    Number(order?.location.long)
+  );
   const data = { ...updateData, destination };
 
   try {
