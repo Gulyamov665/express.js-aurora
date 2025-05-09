@@ -116,8 +116,9 @@ export const updateOrder = async (req: Request, res: Response) => {
         Number(updatedOrder.location.lat),
         Number(updatedOrder.location.long)
       );
-
+      console.log(distance, 'before')
       if (distance?.distance) {
+        console.log(distance, 'after')
         updatedOrder.destination = distance;
       }
     }
