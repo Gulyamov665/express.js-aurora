@@ -36,6 +36,8 @@ export class Orders extends BaseModel {
     photo: string;
     address: string;
     phone: string;
+    lat: string;
+    long: string;
   };
 
   @Column({ type: "jsonb", nullable: true })
