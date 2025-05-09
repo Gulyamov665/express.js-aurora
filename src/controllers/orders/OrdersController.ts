@@ -99,9 +99,11 @@ export const getOrderByUserId = async (req: Request, res: Response) => {
 export const updateOrder = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const updateData = req.body;
+  const destination = await getDistance(39.805718, 64.50184, 39.746765138491405, 64.41126197576524);
+  const data = { ...updateData, destination };
 
   try {
-    const updatedOrder = await OrderService.updateOrder(id, updateData);
+    const updatedOrder = await OrderService.updateOrder(id, data);
     if (!updatedOrder) {
       res.status(404).json({ message: "Order not found" });
       return;
@@ -110,17 +112,10 @@ export const updateOrder = async (req: Request, res: Response) => {
 
     if (updatedOrder.status === "awaiting_courier") {
       tempTokens.forEach((token) => sendPushToCourier(token, id));
-      const distance = await getDistance(
-        39.805718,
-        64.50184,
-        Number(updatedOrder.location.lat),
-        Number(updatedOrder.location.long)
-      );
-      console.log(distance, 'before')
-      if (distance?.distance) {
-        console.log(distance, 'after')
-        updatedOrder.destination = distance;
-      }
+
+      // if (distance?.distance) {
+      //   updateData.destination = distance;
+      // }
     }
     if (updatedOrder.status === "prepare") {
       updatedOrder.courier.accepted_at = new Date();
