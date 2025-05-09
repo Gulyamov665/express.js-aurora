@@ -117,13 +117,12 @@ export const updateOrder = async (req: Request, res: Response) => {
         Number(updatedOrder.location.long)
       );
 
-      updatedOrder.courier.accepted_at = new Date();
       if (distance?.distance) {
         updatedOrder.destination = distance;
-        // updatedOrder.destination.duration = distance.duration;
       }
     }
     if (updatedOrder.status === "prepare") {
+      updatedOrder.courier.accepted_at = new Date();
       notifyAboutOrderStatusChange(updatedOrder);
     }
     res.status(200).json(updatedOrder);
