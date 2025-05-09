@@ -39,10 +39,7 @@ export const notifyAboutOrderStatusChange = async (order: Orders) => {
     const data = {
       id: order.id,
       orders_chat_id: order.orders_chat_id,
-      courier: {
-        first_name: "John",
-        last_name: "Doe",
-      },
+      courier: order.courier,
     };
     await axios.post("https://notify.aurora-api.uz/fastapi/accept-order", data);
   } catch (error) {
