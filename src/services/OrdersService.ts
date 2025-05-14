@@ -68,8 +68,28 @@ export class OrderService {
     return order;
   }
 
-  static async findOrderByUserId(id: number): Promise<Orders[]> {
-    return await this.OrdersRepo.find({ where: { user_id: id }, order: { created_at: "DESC" } });
+  static async findOrderByUserId(id: number): Promise<{ date: string; orders: Orders[] }[]> {
+    const orders = await this.OrdersRepo.find({
+      where: { user_id: id },
+      order: { created_at: "DESC" },
+    });
+
+    const groupedMap: Record<string, Orders[]> = {};
+
+    for (const order of orders) {
+      const date = new Date(order.created_at).toISOString().split("T")[0]; // "2025-05-14"
+      if (!groupedMap[date]) {
+        groupedMap[date] = [];
+      }
+      groupedMap[date].push(order);
+    }
+
+    // Преобразуем в массив и сортируем по дате (сначала новые)
+    const groupedArray = Object.entries(groupedMap)
+      .map(([date, orders]) => ({ date, orders }))
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    return groupedArray;
   }
 
   static async updateOrder(id: number, updateData: Partial<Orders>): Promise<Orders | null> {
