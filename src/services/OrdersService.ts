@@ -69,7 +69,7 @@ export class OrderService {
   }
 
   static async findOrderByUserId(id: number): Promise<Orders[]> {
-    return await this.OrdersRepo.find({ where: { user_id: id } });
+    return await this.OrdersRepo.find({ where: { user_id: id }, order: { created_at: "DESC" } });
   }
 
   static async updateOrder(id: number, updateData: Partial<Orders>): Promise<Orders | null> {
