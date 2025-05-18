@@ -120,8 +120,7 @@ export const updateOrder = async (req: Request, res: Response) => {
     if (updatedOrder.status === "awaiting_courier") {
       const tokens = await getChannel(updatedOrder.restaurant.id);
       if (tokens) {
-        console.log(tokens[0]?.channels);
-        tokens[0]?.channels.forEach((token) => sendPushToCourier(token.fcm_token, id));
+        tokens?.channels.forEach((token) => sendPushToCourier(token.fcm_token, id));
       }
     }
     if (updatedOrder.status === "prepare") {
