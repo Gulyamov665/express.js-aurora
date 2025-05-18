@@ -1,4 +1,5 @@
 import swaggerJSDoc, { Options } from "swagger-jsdoc";
+import { orders } from "../docs/docs";
 
 const swaggerOptions: Options = {
   definition: {
@@ -14,8 +15,9 @@ const swaggerOptions: Options = {
         description: "Локальный сервер",
       },
     ],
+    paths: orders,
   },
-  apis: ["../routes/orderRoutes.ts"], // Указываем пути к файлам с API
+  apis: [__dirname + "/../routes/*.ts"],
 };
 
 const swaggerSpec = swaggerJSDoc(swaggerOptions);

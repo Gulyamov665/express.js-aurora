@@ -11,6 +11,18 @@ interface UserInfo {
   location: UserLocationType;
 }
 
+interface UserChannel {
+  user: number;
+  fcm_token: string;
+  device_type: string | null;
+  device_model: string | null;
+}
+
+interface ChannelResponse {
+  id: number;
+  channels: UserChannel[];
+}
+
 export async function getUserInfo(userId: number): Promise<UserInfo> {
   try {
     // const userResponse = await axios.get<UserInfoType>(`https://new.aurora-api.uz/api/v1/auth/user/${userId}`);
@@ -29,6 +41,17 @@ export async function getUserInfo(userId: number): Promise<UserInfo> {
     };
   }
 }
+
+export const getChannel = async (id: number) => {
+  try {
+    const response = await axios.get<ChannelResponse[]>(
+      `https://stage.aurora-api.uz/api/v1/restaurant/channel/?id=${id}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log("Channel error", error);
+  }
+};
 
 export const notifyAboutNewOrder = async (order: Orders) => {
   try {

@@ -7,7 +7,7 @@ import { TypedRequest } from "./types";
 import { io } from "../..";
 import { sendPushToCourier } from "../../config/firebase/sendPushHandler";
 import { CartService } from "../../services/CartService";
-import { getDistance, getUserInfo, notifyAboutNewOrder, notifyAboutOrderStatusChange } from "../../api/api";
+import { getChannel, getDistance, getUserInfo, notifyAboutNewOrder, notifyAboutOrderStatusChange } from "../../api/api";
 
 export interface CreateOrderDTO {
   created_by: number;
@@ -118,11 +118,11 @@ export const updateOrder = async (req: Request, res: Response) => {
     io.emit("update_order", updatedOrder);
 
     if (updatedOrder.status === "awaiting_courier") {
-      tempTokens.forEach((token) => sendPushToCourier(token, id));
-
-      // if (distance?.distance) {
-      //   updateData.destination = distance;
-      // }
+      const tokens = await getChannel(updatedOrder.restaurant.id);
+      if (tokens) {
+        console.log(tokens[0]?.channels);
+        tokens[0]?.channels.forEach((token) => sendPushToCourier(token.fcm_token, id));
+      }
     }
     if (updatedOrder.status === "prepare") {
       updatedOrder.courier.accepted_at = new Date();

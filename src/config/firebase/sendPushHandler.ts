@@ -1,9 +1,6 @@
-// controllers/notifyCourier.ts
 import admin from "./firebase";
 
 export const sendPushToCourier = async (deviceToken: string, orderId: number) => {
-  const channel = [];
-
   const message = {
     token: deviceToken,
     notification: {
