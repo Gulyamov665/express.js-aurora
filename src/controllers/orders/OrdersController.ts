@@ -40,6 +40,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
 };
 
 export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
+  const fee = 3500;
   try {
     const data = req.body;
     const { fullName: createdByFullName, location } = await getUserInfo(Number(data?.created_by));
@@ -47,7 +48,7 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
     const totalPrice = calcTotalPrice(data.products);
     const orderData = {
       ...data,
-      total_price: totalPrice,
+      total_price: totalPrice && totalPrice + fee,
       created_by: createdByFullName,
       location,
     };
