@@ -44,9 +44,7 @@ export async function getUserInfo(userId: number): Promise<UserInfo> {
 
 export const getChannel = async (id: number) => {
   try {
-    const response = await axios.get<ChannelResponse>(
-      `https://stage.aurora-api.uz/api/v1/restaurant/channel/${id}`
-    );
+    const response = await axios.get<ChannelResponse>(`https://stage.aurora-api.uz/api/v1/restaurant/channel/${id}`);
     return response.data;
   } catch (error) {
     console.log("Channel error", error);

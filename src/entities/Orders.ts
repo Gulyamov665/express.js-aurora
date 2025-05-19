@@ -55,4 +55,7 @@ export class Orders extends BaseModel {
   };
   @Column({ type: "jsonb", nullable: true })
   destination!: DistanceResult;
+
+  @Column({ type: "int", default: 3500, nullable: true })
+  fee!: number;
 }
