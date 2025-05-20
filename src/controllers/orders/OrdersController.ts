@@ -5,7 +5,7 @@ import { calcTotalPrice, Product, totalSum } from "../../utils/countTotalPrice";
 import { Orders } from "../../entities/Orders";
 import { TypedRequest } from "./types";
 import { io } from "../..";
-import { sendPushToCourier } from "../../config/firebase/sendPushHandler";
+import { sendPushToCouriers } from "../../config/firebase/sendPushHandler";
 import { CartService } from "../../services/CartService";
 import { getChannel, getDistance, getUserInfo, notifyAboutNewOrder, notifyAboutOrderStatusChange } from "../../api/api";
 
@@ -15,11 +15,6 @@ export interface CreateOrderDTO {
   cart_id: number;
   restaurant: number;
 }
-
-const tempTokens = [
-  "ck0pwmrnQc201jsXERlBat:APA91bHvWHGoJt79Cs3FvKODyTl1pPlIxK9Um5FkubTYXtaSj-bgwf3-4INQVtzmv8_cv4ZtrMmlr2TLjUw9CPBAiaFvUKI2Xo9KFvC4el059ZK9ZP5DkG4",
-  "cavNv-27Tb6J400zZZR_CN:APA91bEPi5hoSf4wHgJWh7fYDDiQnfl3fBxZVZKkTls3Mf05FbASChY13ZsEg8DNiXaJECryYGcxAO4UddYB1wqKe0I7sRADZ7u3dJJI4JkmLf4Hl7UtfTE",
-];
 
 export const getAllOrders = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
@@ -118,10 +113,18 @@ export const updateOrder = async (req: Request, res: Response) => {
     }
     io.emit("update_order", updatedOrder);
 
+    // if (updatedOrder.status === "awaiting_courier") {
+    //   const tokens = await getChannel(updatedOrder.restaurant.id);
+    //   if (tokens) {
+    //     tokens?.channels.forEach((token) => sendPushToCourier(token.fcm_token, id));
+    //   }
+    // }
+
     if (updatedOrder.status === "awaiting_courier") {
       const tokens = await getChannel(updatedOrder.restaurant.id);
-      if (tokens) {
-        tokens?.channels.forEach((token) => sendPushToCourier(token.fcm_token, id));
+      if (tokens?.channels?.length) {
+        const fcmTokens = tokens.channels.map((token) => token.fcm_token);
+        await sendPushToCouriers(fcmTokens, id);
       }
     }
     if (updatedOrder.status === "prepare") {
