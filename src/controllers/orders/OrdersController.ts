@@ -97,12 +97,15 @@ export const updateOrder = async (req: Request, res: Response) => {
   const updateData = req.body;
   const order = await OrderService.getOrderById(id);
 
+  if (updateData.status === order?.status) return console.log("same status");
+
   const destination = await getDistance(
     Number(order?.restaurant.lat),
     Number(order?.restaurant.long),
     Number(order?.location.lat),
     Number(order?.location.long)
   );
+
   const data = { ...updateData, destination };
 
   try {
