@@ -30,37 +30,25 @@ import admin from "./firebase";
 export const sendPushToCouriers = async (deviceTokens: string[], orderId: number) => {
   if (!deviceTokens.length) return;
 
-  // Разбиваем токены на чанки по 500 (ограничение FCM)
-  const CHUNK_SIZE = 500;
-
-  const chunks = [];
-  for (let i = 0; i < deviceTokens.length; i += CHUNK_SIZE) {
-    chunks.push(deviceTokens.slice(i, i + CHUNK_SIZE));
-  }
-
-  const sendPromises = chunks.map((chunk) => {
-    const message = {
-      tokens: chunk,
+  const message = {
+    tokens: deviceTokens,
+    notification: {
+      title: "Новый заказ",
+      body: `Заказ #${orderId} ожидает подтверждения`,
+    },
+    android: {
       notification: {
-        title: "Новый заказ",
-        body: `Заказ #${orderId} ожидает подтверждения`,
+        channelId: "aurora",
+        vibrateTimingsMillis: [300, 500],
+        priority: "high" as const,
+        sound: "sound",
       },
-      android: {
-        notification: {
-          channelId: "aurora",
-          vibrateTimingsMillis: [300, 500],
-          priority: "high" as const,
-          sound: "sound",
-        },
-      },
-    };
-
-    return admin.messaging().sendEachForMulticast(message);
-  });
+    },
+  };
 
   try {
-    const responses = await Promise.all(sendPromises);
-    console.log(`Уведомления отправлены группам. Всего групп: ${responses.length}`);
+    const response = await admin.messaging().sendEachForMulticast(message);
+    console.log(`Уведомления отправлены. Success: ${response.successCount}, Failure: ${response.failureCount}`);
   } catch (error) {
     console.error("Ошибка при отправке уведомлений:", error);
   }
