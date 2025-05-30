@@ -27,6 +27,9 @@ export class Orders extends BaseModel {
   user_id!: number;
 
   @Column({ type: "varchar", nullable: true })
+  user_phone_number!: string;
+
+  @Column({ type: "varchar", nullable: true })
   orders_chat_id!: string;
 
   @Column({ type: "jsonb", nullable: true })

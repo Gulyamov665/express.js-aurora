@@ -11,6 +11,7 @@ const bodyAllowedFields = [
   "status",
   "orders_chat_id",
   "location",
+  "user_phone_number",
 ];
 const productAllowedFields = ["id", "price", "quantity", "name", "photo"];
 
