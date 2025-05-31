@@ -25,7 +25,7 @@ export const getCartItems = async (req: Request, res: Response) => {
     const totalPrice = cartData ? calcTotalPrice(cartData.products) : null;
 
     res.status(200).json({
-      products: cartData?.products,
+      products: cartData?.products || [],
       totalPrice,
       user: cartData?.user_id,
       vendor: cartData?.restaurant,
