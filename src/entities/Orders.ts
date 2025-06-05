@@ -12,6 +12,12 @@ export class Orders extends BaseModel {
     name: string;
     photo: string;
     quantity: number;
+    options?: {
+      id: number;
+      name: string;
+      price: number;
+      is_active: boolean;
+    };
   }[];
 
   @Column({ type: "decimal" })

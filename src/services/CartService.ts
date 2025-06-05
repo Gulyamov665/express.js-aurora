@@ -40,7 +40,7 @@ export class CartService {
       });
     }
 
-    const existingProduct = cart.products.find((product: any) => product.id === newProduct.id);
+    const existingProduct = cart.products.find((product: Product) => product.id === newProduct.id);
 
     if (existingProduct) {
       existingProduct.quantity += newProduct.quantity;

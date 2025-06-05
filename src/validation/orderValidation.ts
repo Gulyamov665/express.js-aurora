@@ -13,7 +13,7 @@ const bodyAllowedFields = [
   "location",
   "user_phone_number",
 ];
-const productAllowedFields = ["id", "price", "quantity", "name", "photo"];
+const productAllowedFields = ["id", "price", "quantity", "name", "photo", "options"];
 
 export const orderValidation: ValidationChain[] = [
   body("*").custom((_, { req }) => checkBodyFields(req.body, bodyAllowedFields)),
