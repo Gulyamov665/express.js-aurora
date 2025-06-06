@@ -1,5 +1,6 @@
 import { Column, Entity } from "typeorm";
 import { BaseModel } from "./BaseModel";
+import { Product } from "../services/CartService";
 
 // entities/Orders.ts
 @Entity()
@@ -11,5 +12,5 @@ export class Cart extends BaseModel {
   restaurant!: number;
 
   @Column("jsonb")
-  products!: any[];
+  products!: Product[];
 }

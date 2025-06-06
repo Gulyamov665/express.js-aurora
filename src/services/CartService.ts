@@ -1,11 +1,19 @@
 import { AppDataSource } from "../config/database/data-source";
 import { Cart } from "../entities/Cart";
 
-interface Product {
+interface IOptions {
   id: number;
   name: string;
   price: number;
+  is_active: boolean;
+}
+export interface Product {
+  id: number;
+  name: string;
+  price: number;
+  photo: string;
   quantity: number;
+  options?: IOptions; // Опциональные параметры продукта
 }
 
 export class CartService {
@@ -41,8 +49,15 @@ export class CartService {
     }
 
     const existingProduct = cart.products.find((product: Product) => product.id === newProduct.id);
-
-    if (existingProduct) {
+    if (existingProduct?.options && newProduct.options) {
+      // Если продукт с опциями уже существует, обновляем количество
+      if (existingProduct.options.id === newProduct.options.id) {
+        existingProduct.quantity += newProduct.quantity;
+      } else {
+        // Если опции разные, добавляем новый продукт
+        cart.products.push(newProduct);
+      }
+    } else if (existingProduct) {
       existingProduct.quantity += newProduct.quantity;
     } else {
       cart.products.push(newProduct);
