@@ -58,11 +58,9 @@ export class CartService {
     if (existingProduct?.options && newProduct.options) {
       // Если продукт с опциями уже существует, обновляем количество
       if (existingProduct.options.id === newProduct.options.id) {
-        console.log(newProduct, existingProduct, "existingProduct");
         existingProduct.quantity += newProduct.quantity;
       } else {
         // Если опции разные, добавляем новый продукт
-        console.log(newProduct, existingProduct, "newProduct");
         cart.products.push(newProduct);
       }
     } else if (existingProduct) {
