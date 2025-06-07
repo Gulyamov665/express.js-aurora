@@ -48,13 +48,21 @@ export class CartService {
       });
     }
 
-    const existingProduct = cart.products.find((product: Product) => product.id === newProduct.id);
+    const existingProduct = cart.products.find((product: Product) => {
+      return (
+        product.id === newProduct.id &&
+        ((product.options && newProduct.options && product.options.id === newProduct.options.id) ||
+          (!product.options && !newProduct.options))
+      );
+    });
     if (existingProduct?.options && newProduct.options) {
       // Если продукт с опциями уже существует, обновляем количество
       if (existingProduct.options.id === newProduct.options.id) {
+        console.log(newProduct, existingProduct, "existingProduct");
         existingProduct.quantity += newProduct.quantity;
       } else {
         // Если опции разные, добавляем новый продукт
+        console.log(newProduct, existingProduct, "newProduct");
         cart.products.push(newProduct);
       }
     } else if (existingProduct) {
