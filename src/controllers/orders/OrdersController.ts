@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { OrderService } from "../../services/OrdersService";
 import { handleError } from "../../utils/handlerError";
-import { calcTotalPrice, Product, totalSum } from "../../utils/countTotalPrice";
+import { calcTotalPrice, totalSum } from "../../utils/countTotalPrice";
 import { Orders } from "../../entities/Orders";
 import { TypedRequest } from "./types";
 import { io } from "../..";
 import { sendPushToCouriers } from "../../config/firebase/sendPushHandler";
-import { CartService } from "../../services/CartService";
+import { CartService, Product } from "../../services/CartService";
 import { getChannel, getDistance, getUserInfo, notifyAboutNewOrder, notifyAboutOrderStatusChange } from "../../api/api";
 
 export interface CreateOrderDTO {

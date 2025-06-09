@@ -1,4 +1,4 @@
-import { Product } from "../../utils/countTotalPrice";
+import { Product } from "../../services/CartService";
 
 export type GetCartType = {
   id: number;
@@ -7,4 +7,3 @@ export type GetCartType = {
   restaurant: number;
   products: Product[];
 };
-

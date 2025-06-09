@@ -1,12 +1,14 @@
 import { Orders } from "../entities/Orders";
+import { Product } from "../services/CartService";
 
-export type Product = {
-  quantity: number;
-  price: number;
-};
+export const calcTotalPrice = (products: Product[]): number => {
+  if (!products || products.length === 0) return 0;
 
-export const calcTotalPrice = (product: Product[]) => {
-  if (product && product.length > 0) return product.reduce((sum, obj) => obj.price * obj.quantity + sum, 0);
+  return products.reduce((sum, product) => {
+    const price = product.options?.price ?? product.price ?? 0;
+    const quantity = product.quantity ?? 0;
+    return sum + price * quantity;
+  }, 0);
 };
 
 export const totalSum = (orders: Orders[]) => {
