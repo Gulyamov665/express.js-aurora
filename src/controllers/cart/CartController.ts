@@ -1,4 +1,4 @@
-import { CartService } from "../../services/CartService";
+import { CartService, Product } from "../../services/CartService";
 import { Request, Response } from "express";
 import { handleError } from "../../utils/handlerError";
 import { calcTotalPrice } from "../../utils/countTotalPrice";
@@ -37,13 +37,13 @@ export const getCartItems = async (req: Request, res: Response) => {
 };
 
 export const decreaseItem = async (req: Request, res: Response) => {
-  const { user_id, restaurant_id, product_id } = req.body;
+  const { user_id, restaurant_id, product }: { user_id: number; restaurant_id: number; product: Product } = req.body;
 
   try {
     const updatedCart = await CartService.decreaseProductQuantity(
       Number(user_id),
       Number(restaurant_id),
-      Number(product_id)
+      product
     );
 
     res.status(200).json(updatedCart);

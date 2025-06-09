@@ -75,36 +75,46 @@ export class CartService {
   static async decreaseProductQuantity(
     user_id: number,
     restaurant_id: number,
-    product_id: number
+    targetProduct: Product
   ): Promise<Cart | null> {
-    // Находим корзину
     const cart = await this.CartRepo.findOneBy({
       user_id,
       restaurant: restaurant_id,
     });
 
     if (!cart) {
-      return null; // Корзина не найдена
+      return null;
     }
 
-    // Находим продукт в корзине
-    const product = cart.products.find((product: any) => product.id === product_id);
+    // Находим продукт в корзине по id и опциям
+    const productIndex = cart.products.findIndex((product) => {
+      return (
+        product.id === targetProduct.id &&
+        ((product.options && targetProduct.options && product.options.id === targetProduct.options.id) ||
+          (!product.options && !targetProduct.options))
+      );
+    });
 
-    if (!product) {
+    if (productIndex === -1) {
       return null; // Продукт не найден
     }
 
+    const existingProduct = cart.products[productIndex];
+
     // Уменьшаем количество
-    if (product.quantity > 1) {
-      product.quantity -= 1;
-    } else if (product.quantity === 1) {
-      // Если количество равно переданному, удаляем продукт
-      cart.products = cart.products.filter((p: any) => p.id !== product_id);
-    } else {
-      return null; // Попытка уменьшить количество больше, чем есть в корзине
+    existingProduct.quantity -= targetProduct.quantity;
+
+    if (existingProduct.quantity <= 0) {
+      // Удаляем товар
+      cart.products.splice(productIndex, 1);
     }
 
-    // Сохраняем изменения в корзине
+    // Если корзина пуста — можно удалить корзину (опционально)
+    if (cart.products.length === 0) {
+      await this.CartRepo.delete({ user_id, restaurant: restaurant_id });
+      return null;
+    }
+
     return await this.CartRepo.save(cart);
   }
 
