@@ -40,11 +40,7 @@ export const decreaseItem = async (req: Request, res: Response) => {
   const { user_id, restaurant_id, product }: { user_id: number; restaurant_id: number; product: Product } = req.body;
 
   try {
-    const updatedCart = await CartService.decreaseProductQuantity(
-      Number(user_id),
-      Number(restaurant_id),
-      product
-    );
+    const updatedCart = await CartService.decreaseProductQuantity(Number(user_id), Number(restaurant_id), product);
 
     res.status(200).json(updatedCart);
   } catch (error) {

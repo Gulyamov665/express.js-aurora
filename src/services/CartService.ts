@@ -102,7 +102,7 @@ export class CartService {
     const existingProduct = cart.products[productIndex];
 
     // Уменьшаем количество
-    existingProduct.quantity -= targetProduct.quantity;
+    existingProduct.quantity -= 1;
 
     if (existingProduct.quantity <= 0) {
       // Удаляем товар
