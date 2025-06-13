@@ -42,6 +42,19 @@ export async function getUserInfo(userId: number): Promise<UserInfo> {
   }
 }
 
+export async function getCourierInfo(userId: string): Promise<UserInfoType | null> {
+  try {
+    // const userResponse = await axios.get<UserInfoType>(`https://new.aurora-api.uz/api/v1/auth/user/${userId}`);
+    const userResponse = await axios.get<UserInfoType>(`https://stage.aurora-api.uz/api/v1/auth/user/${userId}`);
+    const user = userResponse.data;
+
+    return user;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
 export const getChannel = async (id: number) => {
   try {
     const response = await axios.get<ChannelResponse>(`https://stage.aurora-api.uz/api/v1/restaurant/channel/${id}`);

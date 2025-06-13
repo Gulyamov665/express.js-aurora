@@ -14,6 +14,7 @@ export type UserInfoType = {
   is_user: boolean;
   is_vendor: boolean;
   location: UserLocationType;
+  channels: number[];
 };
 
 export type UserLocationType = {

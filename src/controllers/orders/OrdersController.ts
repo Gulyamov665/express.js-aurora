@@ -7,7 +7,14 @@ import { TypedRequest } from "./types";
 import { io } from "../..";
 import { sendPushToCouriers } from "../../config/firebase/sendPushHandler";
 import { CartService, Product } from "../../services/CartService";
-import { getChannel, getDistance, getUserInfo, notifyAboutNewOrder, notifyAboutOrderStatusChange } from "../../api/api";
+import {
+  getChannel,
+  getCourierInfo,
+  getDistance,
+  getUserInfo,
+  notifyAboutNewOrder,
+  notifyAboutOrderStatusChange,
+} from "../../api/api";
 
 export interface CreateOrderDTO {
   created_by: number;
@@ -171,13 +178,23 @@ export const ordersByDateRange = async (req: Request, res: Response) => {
 
 export const getOrdersByStatus = async (req: Request, res: Response) => {
   const status = req.query.status as string;
-  if (!status) {
+  const id = req.query.id as string;
+
+  if (!status && !id) {
     res.status(400).json({ message: "Status is required" });
     return;
   }
+
+  const courierChannel = await getCourierInfo(id);
+
   try {
     const orders = await OrderService.getOrderByStatus(status);
-    res.status(200).json(orders);
+
+    const filteredOrders = orders.filter(
+      (order) => order.restaurant && courierChannel?.channels.includes(order.restaurant.id)
+    );
+
+    res.status(200).json(filteredOrders);
   } catch (error) {
     handleError(res, error, 400);
   }
