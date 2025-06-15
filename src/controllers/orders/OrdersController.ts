@@ -104,7 +104,7 @@ export const updateOrder = async (req: Request, res: Response) => {
   const updateData = req.body;
   const order = await OrderService.getOrderById(id);
 
-  if (updateData.status === order?.status) return console.log("same status");
+  // if (updateData.status === order?.status) return console.log("same status");
 
   const destination = await getDistance(
     Number(order?.restaurant.lat),
@@ -122,13 +122,6 @@ export const updateOrder = async (req: Request, res: Response) => {
       return;
     }
     io.emit("update_order", updatedOrder);
-
-    // if (updatedOrder.status === "awaiting_courier") {
-    //   const tokens = await getChannel(updatedOrder.restaurant.id);
-    //   if (tokens) {
-    //     tokens?.channels.forEach((token) => sendPushToCourier(token.fcm_token, id));
-    //   }
-    // }
 
     if (updatedOrder.status === "awaiting_courier") {
       const tokens = await getChannel(updatedOrder.restaurant.id);
