@@ -16,6 +16,8 @@ export const sendPushToCouriers = async (deviceTokens: string[], orderId: number
         priority: "high" as const,
         sound: "sound",
       },
+      priority: "high" as const,
+      ttl: 3600 * 1000, // 1 час в миллисекундах
     },
   };
 
