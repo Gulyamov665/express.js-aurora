@@ -26,6 +26,7 @@ interface ChannelResponse {
 interface VendorStatus {
   is_open: boolean;
   message: string;
+  code: number;
 }
 
 export async function getUserInfo(userId: number): Promise<UserInfo> {
