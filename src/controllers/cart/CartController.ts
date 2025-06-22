@@ -3,9 +3,17 @@ import { Request, Response } from "express";
 import { handleError } from "../../utils/handlerError";
 import { calcTotalPrice } from "../../utils/countTotalPrice";
 import { GetCartType } from "./types";
+import { getVendorStatus } from "../../api/api";
 
 export const addToCart = async (req: Request, res: Response) => {
   const { user_id, restaurant, products } = req.body;
+
+  const vendorStatus = await getVendorStatus(restaurant.id);
+
+  if (!vendorStatus?.is_open) {
+    res.status(400).json({ message: vendorStatus?.message, is_open: vendorStatus?.is_open });
+    return;
+  }
 
   try {
     const updatedCart = await CartService.addOrUpdateCartProducts(user_id, restaurant, products);

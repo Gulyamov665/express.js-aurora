@@ -23,6 +23,11 @@ interface ChannelResponse {
   channels: UserChannel[];
 }
 
+interface VendorStatus {
+  is_open: boolean;
+  message: string;
+}
+
 export async function getUserInfo(userId: number): Promise<UserInfo> {
   try {
     // const userResponse = await axios.get<UserInfoType>(`https://new.aurora-api.uz/api/v1/auth/user/${userId}`);
@@ -58,6 +63,15 @@ export async function getCourierInfo(userId: string): Promise<UserInfoType | nul
 export const getChannel = async (id: number) => {
   try {
     const response = await axios.get<ChannelResponse>(`https://stage.aurora-api.uz/api/v1/restaurant/channel/${id}`);
+    return response.data;
+  } catch (error) {
+    console.log("Channel error", error);
+  }
+};
+
+export const getVendorStatus = async (id: number) => {
+  try {
+    const response = await axios.get<VendorStatus>(`https://stage.aurora-api.uz/api/v1/restaurant/${id}/status`);
     return response.data;
   } catch (error) {
     console.log("Channel error", error);
