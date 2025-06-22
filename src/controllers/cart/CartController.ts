@@ -6,12 +6,12 @@ import { GetCartType } from "./types";
 import { getVendorStatus } from "../../api/api";
 
 export const addToCart = async (req: Request, res: Response) => {
-  const { user_id, restaurant, products } = req.body;
+  const { user_id, restaurant, products }: { user_id: number; restaurant: number; products: Product } = req.body;
 
-  const vendorStatus = await getVendorStatus(restaurant.id);
+  const vendorStatus = await getVendorStatus(restaurant);
 
   if (!vendorStatus?.is_open) {
-    res.status(200).json({ message: vendorStatus?.message, is_open: vendorStatus?.is_open });
+    res.status(200).json({ data: { message: vendorStatus?.message, is_open: vendorStatus?.is_open } });
     return;
   }
 
