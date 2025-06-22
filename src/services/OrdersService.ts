@@ -132,4 +132,24 @@ export class OrderService {
   static async getOrderById(id: number): Promise<Orders | null> {
     return await this.OrdersRepo.findOneBy({ id });
   }
+
+  static async changeOrderItems(orderId: number, productId: number): Promise<Orders | null> {
+    const order = await this.OrdersRepo.findOneBy({ id: orderId });
+    if (!order) {
+      return null;
+    }
+    const item = order.products.find((item) => item.id === productId);
+
+    if (!item) {
+      return null; // или можно выбросить ошибку, если продукт не найден
+    }
+
+    // Увеличиваем количество
+    item.quantity += 1;
+
+    // Если нужно — пересчитайте total_price
+    order.total_price = order.products.reduce((sum, p) => sum + p.price * p.quantity, 0);
+
+    return this.OrdersRepo.save(order);
+  }
 }

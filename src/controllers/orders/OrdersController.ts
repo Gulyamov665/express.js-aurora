@@ -203,3 +203,14 @@ export const getOrderByCourierId = async (req: Request, res: Response) => {
     handleError(res, error, 400);
   }
 };
+
+export const changeOrderComposition = async (req: Request, res: Response) => {
+  const { id, product_id }: { id: number; product_id: number } = req.body;
+
+  try {
+    const changeItems = OrderService.changeOrderItems(id, product_id);
+    res.status(201).json(changeItems);
+  } catch (error) {
+    handleError(res, error, 400);
+  }
+};

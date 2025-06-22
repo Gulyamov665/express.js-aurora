@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  changeOrderComposition,
   createOrder,
   findOrderById,
   getAllOrders,
@@ -26,3 +27,4 @@ orderRoutes.get("/me/:id", getOrderByUserId);
 orderRoutes.get("/getOrderById/:id", findOrderById);
 orderRoutes.post("/ordersByDateRange", ordersByDateRange);
 orderRoutes.get("/getCourierOrders/:id", getOrderByCourierId);
+orderRoutes.post("/changeOrderComposition", changeOrderComposition);
