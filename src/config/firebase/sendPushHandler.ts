@@ -5,10 +5,10 @@ export const sendPushToCouriers = async (deviceTokens: string[], orderId: number
 
   const message = {
     tokens: deviceTokens,
-    // notification: {
-    //   title: "Новый заказ",
-    //   body: `Заказ #${orderId} ожидает подтверждения`,
-    // },
+    notification: {
+      title: "Новый заказ",
+      body: `Заказ #${orderId} ожидает подтверждения`,
+    },
     data: {
       title: "Новый заказ",
       body: `Заказ #${orderId} ожидает подтверждения`,

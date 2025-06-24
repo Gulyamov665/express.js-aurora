@@ -147,7 +147,6 @@ export class OrderService {
     // Увеличиваем количество
     item.quantity += 1;
 
-    // Если нужно — пересчитайте total_price
     order.total_price = order.products.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
     return this.OrdersRepo.save(order);
