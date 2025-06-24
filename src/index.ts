@@ -9,12 +9,6 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 export const io = new Server(server, WebSocketCors);
 
-// 1) Хранилище pending таймеров
-interface Pending {
-  timer: NodeJS.Timeout;
-}
-const pending = new Map<string, Pending>();
-
 const startServer = async () => {
   if (process.env.NODE_ENV !== "test") {
     await connectDB();
@@ -25,8 +19,7 @@ const startServer = async () => {
   });
 
   io.on("connection", (socket: Socket) => {
-    const userId = socket.handshake.query.userId as string;
-    console.log(`🛜 WS Клиент подключен: (user ${userId})`);
+    console.log(`🛜 WS Клиент подключен: ${socket.id}`);
 
     socket.on("disconnect", () => {
       console.log(`🔌 Клиент отключился: ${socket.id}`);
