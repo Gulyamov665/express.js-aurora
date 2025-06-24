@@ -25,7 +25,8 @@ const startServer = async () => {
   });
 
   io.on("connection", (socket: Socket) => {
-    console.log(`🛜 WS Клиент подключен: ${socket.id} ${socket}`);
+    const userId = socket.handshake.query.userId as string;
+    console.log(`🛜 WS Клиент подключен: (user ${userId})`);
 
     socket.on("disconnect", () => {
       console.log(`🔌 Клиент отключился: ${socket.id}`);
