@@ -1,4 +1,4 @@
-import { Between, Raw } from "typeorm";
+import { Between, In, Raw } from "typeorm";
 import { AppDataSource } from "../config/database/data-source";
 import { Orders } from "../entities/Orders";
 
@@ -124,6 +124,7 @@ export class OrderService {
     return this.OrdersRepo.find({
       where: {
         courier: Raw((alias) => `${alias} @> '{"id": ${courierId}}'`),
+        status: In(["prepare", "on_the_way"]),
       },
       order: { created_at: "DESC" },
     });

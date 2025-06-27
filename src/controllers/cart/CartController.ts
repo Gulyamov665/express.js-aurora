@@ -10,6 +10,8 @@ export const addToCart = async (req: Request, res: Response) => {
 
   const vendorStatus = await getVendorStatus(restaurant);
 
+  
+
   if (!vendorStatus?.is_open) {
     res.status(400).json({ message: vendorStatus?.message, is_open: vendorStatus?.is_open, code: vendorStatus?.code });
     return;
