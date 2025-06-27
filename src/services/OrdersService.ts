@@ -121,8 +121,15 @@ export class OrderService {
   }
 
   static async findOrdersByCourierId(courierId: number): Promise<Orders[]> {
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+
     return this.OrdersRepo.find({
       where: {
+        created_at: Between(startOfToday, endOfToday),
         courier: Raw((alias) => `${alias} @> '{"id": ${courierId}}'`),
         status: In(["prepare", "on_the_way"]),
       },
