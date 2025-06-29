@@ -195,7 +195,7 @@ export const getOrdersByStatus = async (req: Request, res: Response) => {
 
 export const getOrderByCourierId = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
-  const period = (req.query.period as "today" | "week" | "month") || "today";
+  const period = (req.query.period as "today" | "week" | "month" | "period") || "today";
 
   try {
     const orders = await OrderService.findOrdersByCourierId(id, period);

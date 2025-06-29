@@ -139,7 +139,7 @@ export class OrderService {
 
   static async findOrdersByCourierId(
     courierId: number,
-    period: "today" | "week" | "month" = "today"
+    period?: "today" | "week" | "month" | "period"
   ): Promise<Orders[]> {
     const now = new Date();
 
@@ -163,6 +163,16 @@ export class OrderService {
     if (period !== "today") {
       start.setHours(0, 0, 0, 0);
       end.setTime(now.getTime()); // до текущего момента
+    }
+    if (period) {
+      return this.OrdersRepo.find({
+        where: {
+          created_at: Between(start, end),
+          courier: Raw((alias) => `${alias} @> '{"id": ${courierId}}'`),
+          status: In(["completed"]),
+        },
+        order: { created_at: "DESC" },
+      });
     }
 
     return this.OrdersRepo.find({
