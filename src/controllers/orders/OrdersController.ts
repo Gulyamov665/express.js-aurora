@@ -195,10 +195,38 @@ export const getOrdersByStatus = async (req: Request, res: Response) => {
 
 export const getOrderByCourierId = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
+
+  try {
+    const orders = await OrderService.findOrdersByCourierId(id);
+    res.status(200).json(orders);
+  } catch (error) {
+    handleError(res, error, 400);
+  }
+};
+
+export const getCourierStats = async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
   const period = req.query.period as "today" | "week" | "month" | "period";
 
   try {
-    const orders = await OrderService.findOrdersByCourierId(id, period);
+    const orders = await OrderService.getCourierOrderStats(id, period);
+
+    const stats = {
+      today: {
+        deliveries: orders.filter((order) => order.status === "completed").length,
+        earnings: 0,
+        time: "0ч 0м",
+        goal: orders.length, // цель по заказам
+        yesterdayDeliveries: 10,
+        yesterdayEarnings: 27000,
+      },
+      total: {
+        deliveries: orders.length,
+        earnings: 525000,
+        avgTime: "38 мин",
+      },
+    };
+
     res.status(200).json(orders);
   } catch (error) {
     handleError(res, error, 400);

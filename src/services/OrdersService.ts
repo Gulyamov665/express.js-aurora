@@ -120,24 +120,17 @@ export class OrderService {
     return orders;
   }
 
-  // static async findOrdersByCourierId(courierId: number): Promise<Orders[]> {
-  //   const startOfToday = new Date();
-  //   startOfToday.setHours(0, 0, 0, 0);
+  static async findOrdersByCourierId(courierId: number): Promise<Orders[]> {
+    return this.OrdersRepo.find({
+      where: {
+        courier: Raw((alias) => `${alias} @> '{"id": ${courierId}}'`),
+        status: In(["prepare", "on_the_way"]),
+      },
+      order: { created_at: "DESC" },
+    });
+  }
 
-  //   const endOfToday = new Date();
-  //   endOfToday.setHours(23, 59, 59, 999);
-
-  //   return this.OrdersRepo.find({
-  //     where: {
-  //       created_at: Between(startOfToday, endOfToday),
-  //       courier: Raw((alias) => `${alias} @> '{"id": ${courierId}}'`),
-  //       status: In(["prepare", "on_the_way"]),
-  //     },
-  //     order: { created_at: "DESC" },
-  //   });
-  // }
-
-  static async findOrdersByCourierId(
+  static async getCourierOrderStats(
     courierId: number,
     period?: "today" | "week" | "month" | "period"
   ): Promise<Orders[]> {
@@ -169,7 +162,7 @@ export class OrderService {
         where: {
           created_at: Between(start, end),
           courier: Raw((alias) => `${alias} @> '{"id": ${courierId}}'`),
-          status: In(["completed"]),
+          status: In(["completed", "on_the_way"]),
         },
         order: { created_at: "DESC" },
       });
@@ -184,7 +177,6 @@ export class OrderService {
       order: { created_at: "DESC" },
     });
   }
-
   static async getOrderById(id: number): Promise<Orders | null> {
     return await this.OrdersRepo.findOneBy({ id });
   }
