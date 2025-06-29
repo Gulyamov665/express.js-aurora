@@ -160,10 +160,10 @@ export class OrderService {
         break;
     }
 
-    if (period !== "today") {
-      start.setHours(0, 0, 0, 0);
-      end.setTime(now.getTime()); // до текущего момента
-    }
+    // if (period !== "today") {
+    //   start.setHours(0, 0, 0, 0);
+    //   end.setTime(now.getTime()); // до текущего момента
+    // }
     if (period) {
       return this.OrdersRepo.find({
         where: {
