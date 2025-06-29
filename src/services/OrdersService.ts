@@ -120,16 +120,54 @@ export class OrderService {
     return orders;
   }
 
-  static async findOrdersByCourierId(courierId: number): Promise<Orders[]> {
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
+  // static async findOrdersByCourierId(courierId: number): Promise<Orders[]> {
+  //   const startOfToday = new Date();
+  //   startOfToday.setHours(0, 0, 0, 0);
 
-    const endOfToday = new Date();
-    endOfToday.setHours(23, 59, 59, 999);
+  //   const endOfToday = new Date();
+  //   endOfToday.setHours(23, 59, 59, 999);
+
+  //   return this.OrdersRepo.find({
+  //     where: {
+  //       created_at: Between(startOfToday, endOfToday),
+  //       courier: Raw((alias) => `${alias} @> '{"id": ${courierId}}'`),
+  //       status: In(["prepare", "on_the_way"]),
+  //     },
+  //     order: { created_at: "DESC" },
+  //   });
+  // }
+
+  static async findOrdersByCourierId(
+    courierId: number,
+    period: "today" | "week" | "month" = "today"
+  ): Promise<Orders[]> {
+    const now = new Date();
+
+    const start = new Date();
+    const end = new Date();
+
+    switch (period) {
+      case "week":
+        start.setDate(now.getDate() - 7);
+        break;
+      case "month":
+        start.setMonth(now.getMonth() - 1);
+        break;
+      case "today":
+      default:
+        start.setHours(0, 0, 0, 0);
+        end.setHours(23, 59, 59, 999);
+        break;
+    }
+
+    if (period !== "today") {
+      start.setHours(0, 0, 0, 0);
+      end.setTime(now.getTime()); // до текущего момента
+    }
 
     return this.OrdersRepo.find({
       where: {
-        created_at: Between(startOfToday, endOfToday),
+        // created_at: Between(start, end),
         courier: Raw((alias) => `${alias} @> '{"id": ${courierId}}'`),
         status: In(["prepare", "on_the_way"]),
       },
