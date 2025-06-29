@@ -227,7 +227,7 @@ export const getCourierStats = async (req: Request, res: Response) => {
       },
     };
 
-    res.status(200).json(orders);
+    res.status(200).json({ orders, stats });
   } catch (error) {
     handleError(res, error, 400);
   }
