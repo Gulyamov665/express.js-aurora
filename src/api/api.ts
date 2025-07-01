@@ -30,6 +30,8 @@ interface VendorStatus {
 }
 
 const BASE_DJANGO = process.env.DJANGO_URL;
+const API_KEY = process.env.GOOGLE_API_KEY;
+
 
 export async function getUserInfo(userId: number): Promise<UserInfo> {
   try {
@@ -102,7 +104,6 @@ export const notifyAboutOrderStatusChange = async (order: Orders) => {
   }
 };
 
-const API_KEY = process.env.GOOGLE_API_KEY;
 
 if (!API_KEY) {
   throw new Error("API ключ не найден в .env!");

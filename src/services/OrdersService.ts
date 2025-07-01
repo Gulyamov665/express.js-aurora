@@ -181,7 +181,7 @@ export class OrderService {
     return await this.OrdersRepo.findOneBy({ id });
   }
 
-  static async changeOrderItems(orderId: number, productId: number): Promise<Orders | null> {
+  static async changeOrderItems(orderId: number, productId: number, type: string): Promise<Orders | null> {
     const order = await this.OrdersRepo.findOneBy({ id: orderId });
     if (!order) {
       return null;
@@ -193,7 +193,14 @@ export class OrderService {
     }
 
     // Увеличиваем количество
-    item.quantity += 1;
+    if (type === "decrease" && item.quantity > 1) {
+      item.quantity -= 1;
+    }
+    if (type === "increase") {
+      // Если не decrease, то увеличиваем количество
+      item.quantity += 1;
+    }
+    // item.quantity += 1;
 
     order.total_price = order.products.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
