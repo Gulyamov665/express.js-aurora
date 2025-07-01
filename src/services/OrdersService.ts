@@ -183,24 +183,20 @@ export class OrderService {
   }
 
   static async changeOrderItems(orderId: number, productId: number, type: string): Promise<Orders | null> {
-    const order = await this.OrdersRepo.findOneBy({ id: orderId });
+    const order = await this.OrdersRepo.findOne({ where: { id: orderId } });
     if (!order) {
       return null;
     }
     const item = order.products.find((item) => item.id === productId);
 
-    if (!item) {
-      return null; // или можно выбросить ошибку, если продукт не найден
-    }
     if (type === "add") {
-      if (item.quantity) {
+      if (item?.quantity) {
         item.quantity += 1;
       } else {
         const product = await getProductById(productId);
         console.log(product, "find product by id");
 
         if (product) {
-          console.log("first time add product to order");
           const newProduct = {
             id: product?.id,
             name: product?.name,
@@ -212,17 +208,19 @@ export class OrderService {
         }
       }
     }
+    // if (!item) {
+    //   return null; // или можно выбросить ошибку, если продукт не найден
+    // }
 
-    console.log(order.products, "order products after add");
-    if (type === "decrease" && item.quantity) {
+    if (type === "decrease" && item?.quantity) {
       item.quantity -= 1;
     }
 
-    if (type === "increase") {
+    if (item && type === "increase") {
       item.quantity += 1;
     }
 
-    if (item.quantity === 0) {
+    if (item?.quantity === 0) {
       order.products = order.products.filter((product) => product.id !== productId);
     }
 
