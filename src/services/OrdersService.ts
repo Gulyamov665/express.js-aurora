@@ -192,15 +192,17 @@ export class OrderService {
       return null; // или можно выбросить ошибку, если продукт не найден
     }
 
-    // Увеличиваем количество
-    if (type === "decrease" && item.quantity > 1) {
+    if (type === "decrease" && item.quantity) {
       item.quantity -= 1;
     }
+
     if (type === "increase") {
-      // Если не decrease, то увеличиваем количество
       item.quantity += 1;
     }
-    // item.quantity += 1;
+
+    if (item.quantity === 0) {
+      order.products = order.products.filter((product) => product.id !== productId);
+    }
 
     order.total_price = order.products.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
