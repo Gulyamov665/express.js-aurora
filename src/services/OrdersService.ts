@@ -191,6 +191,13 @@ export class OrderService {
     if (!item) {
       return null; // или можно выбросить ошибку, если продукт не найден
     }
+    if (type === "add") {
+      if (item.quantity) {
+        item.quantity += 1;
+      } else {
+        item.quantity = 1;
+      }
+    }
 
     if (type === "decrease" && item.quantity) {
       item.quantity -= 1;
