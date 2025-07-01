@@ -197,8 +197,10 @@ export class OrderService {
         item.quantity += 1;
       } else {
         const product = await getProductById(productId);
+        console.log(product, "find product by id");
 
         if (product) {
+          console.log("first time add product to order");
           const newProduct = {
             id: product?.id,
             name: product?.name,
@@ -211,6 +213,7 @@ export class OrderService {
       }
     }
 
+    console.log(order.products, "order products after add");
     if (type === "decrease" && item.quantity) {
       item.quantity -= 1;
     }
