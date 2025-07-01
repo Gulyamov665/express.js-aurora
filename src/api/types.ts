@@ -22,3 +22,30 @@ export type DistanceResult = {
   distance: string;
   duration: string;
 };
+
+type Variant = {
+  id: number;
+  name: string;
+  price: number;
+  is_active: boolean;
+};
+
+type Option = {
+  id: number;
+  variants: Variant[];
+};
+
+export type ProductItem = {
+  id: number;
+  name: string;
+  description: string | null;
+  price: number;
+  photo: string;
+  category: number;
+  category_label: string;
+  is_active: boolean;
+  availability: boolean;
+  restaurant: number;
+  thumb: string;
+  options: Option;
+};

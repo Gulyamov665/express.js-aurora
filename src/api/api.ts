@@ -1,11 +1,12 @@
 import axios from "axios";
 import { UserInfoType, UserLocationType } from "../controllers/orders/types";
 import { Orders } from "../entities/Orders";
-import { DistanceMatrixResponse, DistanceResult } from "./types";
+import { DistanceMatrixResponse, DistanceResult, ProductItem } from "./types";
 import dotenv from "dotenv";
 
 dotenv.config();
-
+const BASE_DJANGO = process.env.DJANGO_URL;
+const API_KEY = process.env.GOOGLE_API_KEY;
 interface UserInfo {
   fullName: string;
   location: UserLocationType;
@@ -28,10 +29,6 @@ interface VendorStatus {
   message: string;
   code: number;
 }
-
-const BASE_DJANGO = process.env.DJANGO_URL;
-const API_KEY = process.env.GOOGLE_API_KEY;
-
 
 export async function getUserInfo(userId: number): Promise<UserInfo> {
   try {
@@ -104,7 +101,6 @@ export const notifyAboutOrderStatusChange = async (order: Orders) => {
   }
 };
 
-
 if (!API_KEY) {
   throw new Error("API ключ не найден в .env!");
 }
@@ -145,6 +141,16 @@ export const getDistance = async (
     } else {
       console.error("Неизвестная ошибка:", error);
     }
+    return null;
+  }
+};
+
+export const getProductById = async (id: number) => {
+  try {
+    const response = await axios.get<ProductItem>(`${BASE_DJANGO}/v1/menu/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Ошибка при получении продукта:", error);
     return null;
   }
 };

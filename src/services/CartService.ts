@@ -13,7 +13,7 @@ export interface Product {
   price: number;
   photo: string;
   quantity: number;
-  options?: IOptions; // Опциональные параметры продукта
+  options?: IOptions; 
 }
 
 export class CartService {

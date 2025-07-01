@@ -1,6 +1,7 @@
 import { Between, In, Raw } from "typeorm";
 import { AppDataSource } from "../config/database/data-source";
 import { Orders } from "../entities/Orders";
+import { getProductById } from "../api/api";
 
 interface PaginatedOrders {
   data: Orders[];
@@ -195,7 +196,18 @@ export class OrderService {
       if (item.quantity) {
         item.quantity += 1;
       } else {
-        item.quantity = 1;
+        const product = await getProductById(productId);
+
+        if (product) {
+          const newProduct = {
+            id: product?.id,
+            name: product?.name,
+            photo: product?.photo,
+            price: product?.price,
+            quantity: 1,
+          };
+          order.products.push(newProduct);
+        }
       }
     }
 
