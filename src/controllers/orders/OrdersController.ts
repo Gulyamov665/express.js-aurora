@@ -15,6 +15,7 @@ import {
   notifyAboutNewOrder,
   notifyAboutOrderStatusChange,
 } from "../../api/api";
+import { ChangeOrderItemsParams, OrderItemAction } from "../../services/orderTypes";
 
 export interface CreateOrderDTO {
   created_by: number;
@@ -234,10 +235,10 @@ export const getCourierStats = async (req: Request, res: Response) => {
 };
 
 export const changeOrderComposition = async (req: Request, res: Response) => {
-  const { id, product_id, type }: { id: number; product_id: number; type: string } = req.body;
+  const { id, product_id, type, option_id }: ChangeOrderItemsParams = req.body;
 
   try {
-    const changeItems = OrderService.changeOrderItems(id, product_id, type);
+    const changeItems = OrderService.changeOrderItems({ id, product_id, type, option_id });
     res.status(201).json(changeItems);
   } catch (error) {
     handleError(res, error, 400);

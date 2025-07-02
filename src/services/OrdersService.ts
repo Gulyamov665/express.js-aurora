@@ -2,6 +2,7 @@ import { Between, In, Raw } from "typeorm";
 import { AppDataSource } from "../config/database/data-source";
 import { Orders } from "../entities/Orders";
 import { getProductById } from "../api/api";
+import { ChangeOrderItemsParams } from "./orderTypes";
 
 interface PaginatedOrders {
   data: Orders[];
@@ -184,28 +185,92 @@ export class OrderService {
     return await this.OrdersRepo.findOneBy({ id });
   }
 
-  static async changeOrderItems(orderId: number, productId: number, type: string): Promise<Orders | null> {
-    const order = await this.OrdersRepo.findOne({ where: { id: orderId } });
-    if (!order) {
-      return null;
-    }
-    const item = order.products.find((item) => item.id === productId);
+  // static async changeOrderItems(args: ChangeOrderItemsParams): Promise<Orders | null> {
+  //   const { id, product_id, type, option_id = null } = args;
+
+  //   const order = await this.OrdersRepo.findOne({ where: { id: id } });
+  //   if (!order) {
+  //     return null;
+  //   }
+  //   const item = order.products.find((item) => item.id === product_id);
+
+  //   if (type === "add") {
+  //     if (item?.quantity) {
+  //       item.quantity += 1;
+  //     } else {
+  //       const product = await getProductById(product_id);
+
+  //       if (product) {
+  //         const newProduct = {
+  //           id: product?.id,
+  //           name: product?.name,
+  //           photo: product?.photo,
+  //           price: product?.price,
+  //           quantity: 1,
+  //         };
+  //         order.products.push(newProduct);
+  //       }
+  //     }
+  //   }
+
+  //   if (type === "decrease" && item?.quantity) {
+  //     item.quantity -= 1;
+  //   }
+
+  //   if (item && type === "increase") {
+  //     item.quantity += 1;
+  //   }
+
+  //   if (item?.quantity === 0) {
+  //     order.products = order.products.filter((product) => product.id !== product_id);
+  //   }
+
+  //   order.total_price = order.products.reduce((sum, p) => sum + p.price * p.quantity, 0) + SERVICE_FEE;
+
+  //   return this.OrdersRepo.save(order);
+  // }
+
+  static async changeOrderItems(args: ChangeOrderItemsParams): Promise<Orders | null> {
+    const { id, product_id, type, option_id = null } = args;
+
+    const order = await this.OrdersRepo.findOne({ where: { id } });
+    if (!order) return null;
+
+    const item = order.products.find((item) => {
+      const sameId = item.id === product_id;
+      const sameOption = option_id ? item.options?.id === option_id : !item.options;
+      return sameId && sameOption;
+    });
 
     if (type === "add") {
       if (item?.quantity) {
         item.quantity += 1;
       } else {
-        const product = await getProductById(productId);
-        console.log(product, "find product by id");
+        const product = await getProductById(product_id);
 
         if (product) {
+          let selectedOption = null;
+
+          if (option_id && Array.isArray(product.options)) {
+            selectedOption = product.options.find((opt) => opt.id === option_id);
+          }
+
           const newProduct = {
-            id: product?.id,
-            name: product?.name,
-            photo: product?.photo,
-            price: product?.price,
+            id: product.id,
+            name: product.name,
+            photo: product.photo,
+            price: product.price,
             quantity: 1,
+            options: selectedOption
+              ? {
+                  id: selectedOption.id,
+                  name: selectedOption.name,
+                  price: selectedOption.price,
+                  is_active: selectedOption.is_active,
+                }
+              : undefined,
           };
+
           order.products.push(newProduct);
         }
       }
@@ -220,10 +285,15 @@ export class OrderService {
     }
 
     if (item?.quantity === 0) {
-      order.products = order.products.filter((product) => product.id !== productId);
+      order.products = order.products.filter((product) => {
+        const sameId = product.id === product_id;
+        const sameOption = option_id ? product.options?.id === option_id : !product.options;
+        return !(sameId && sameOption);
+      });
     }
 
-    order.total_price = order.products.reduce((sum, p) => sum + p.price * p.quantity, 0) + SERVICE_FEE;
+    order.total_price =
+      order.products.reduce((sum, p) => sum + (p.options?.price ?? p.price) * p.quantity, 0) + SERVICE_FEE;
 
     return this.OrdersRepo.save(order);
   }
