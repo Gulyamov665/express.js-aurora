@@ -9,6 +9,8 @@ interface PaginatedOrders {
   page: number;
   last_page: number;
 }
+const SERVICE_FEE = 3500;
+
 export class OrderService {
   static OrdersRepo = AppDataSource.getRepository(Orders);
 
@@ -208,9 +210,6 @@ export class OrderService {
         }
       }
     }
-    // if (!item) {
-    //   return null; // или можно выбросить ошибку, если продукт не найден
-    // }
 
     if (type === "decrease" && item?.quantity) {
       item.quantity -= 1;
@@ -224,7 +223,7 @@ export class OrderService {
       order.products = order.products.filter((product) => product.id !== productId);
     }
 
-    order.total_price = order.products.reduce((sum, p) => sum + p.price * p.quantity, 0);
+    order.total_price = order.products.reduce((sum, p) => sum + p.price * p.quantity, 0) + SERVICE_FEE;
 
     return this.OrdersRepo.save(order);
   }
