@@ -251,7 +251,7 @@ export class OrderService {
         if (product) {
           let selectedOption = null;
 
-          if (option_id && Array.isArray(product.options)) {
+          if (option_id && Array.isArray(product.options.variants)) {
             selectedOption = product.options.variants.find((opt) => opt.id === option_id);
           }
 
