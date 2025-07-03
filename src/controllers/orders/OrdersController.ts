@@ -166,7 +166,9 @@ export const ordersByDateRange = async (req: Request, res: Response) => {
     const delivered = orders.filter((order) => order.status === "completed");
     const serviceFee = totalSumFee(delivered);
 
-    res.status(200).json({ orders, sum, quantity: orders.length, canceled, delivered, fee_sum: serviceFee });
+    res
+      .status(200)
+      .json({ orders, sum, quantity: orders.length, canceled, delivered: delivered.length, fee_sum: serviceFee });
   } catch (error) {
     handleError(res, error, 400);
   }
