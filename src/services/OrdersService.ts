@@ -111,7 +111,10 @@ export class OrderService {
 
   static async getOrdersByDateRange(startDateStr: string, endDateStr: string, restaurantId: number): Promise<Orders[]> {
     const startDate = new Date(startDateStr);
+    startDate.setHours(0, 0, 0, 0);
+    
     const endDate = new Date(endDateStr);
+    endDate.setHours(23, 59, 59, 999);
 
     const orders = await this.OrdersRepo.find({
       where: {
