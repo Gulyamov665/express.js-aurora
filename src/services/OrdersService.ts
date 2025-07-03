@@ -185,51 +185,6 @@ export class OrderService {
     return await this.OrdersRepo.findOneBy({ id });
   }
 
-  // static async changeOrderItems(args: ChangeOrderItemsParams): Promise<Orders | null> {
-  //   const { id, product_id, type, option_id = null } = args;
-
-  //   const order = await this.OrdersRepo.findOne({ where: { id: id } });
-  //   if (!order) {
-  //     return null;
-  //   }
-  //   const item = order.products.find((item) => item.id === product_id);
-
-  //   if (type === "add") {
-  //     if (item?.quantity) {
-  //       item.quantity += 1;
-  //     } else {
-  //       const product = await getProductById(product_id);
-
-  //       if (product) {
-  //         const newProduct = {
-  //           id: product?.id,
-  //           name: product?.name,
-  //           photo: product?.photo,
-  //           price: product?.price,
-  //           quantity: 1,
-  //         };
-  //         order.products.push(newProduct);
-  //       }
-  //     }
-  //   }
-
-  //   if (type === "decrease" && item?.quantity) {
-  //     item.quantity -= 1;
-  //   }
-
-  //   if (item && type === "increase") {
-  //     item.quantity += 1;
-  //   }
-
-  //   if (item?.quantity === 0) {
-  //     order.products = order.products.filter((product) => product.id !== product_id);
-  //   }
-
-  //   order.total_price = order.products.reduce((sum, p) => sum + p.price * p.quantity, 0) + SERVICE_FEE;
-
-  //   return this.OrdersRepo.save(order);
-  // }
-
   static async changeOrderItems(args: ChangeOrderItemsParams): Promise<Orders | null> {
     const { id, product_id, type, option_id = null } = args;
 

@@ -14,3 +14,7 @@ export const calcTotalPrice = (products: Product[]): number => {
 export const totalSum = (orders: Orders[]) => {
   if (orders && orders.length > 0) return orders.reduce((acc, order) => acc + Number(order.total_price), 0);
 };
+
+export const totalSumFee = (orders: Orders[]) => {
+  if (orders && orders.length > 0) return orders.reduce((acc, order) => acc + Number(order.fee), 0);
+};

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { OrderService } from "../../services/OrdersService";
 import { handleError } from "../../utils/handlerError";
-import { calcTotalPrice, totalSum } from "../../utils/countTotalPrice";
+import { calcTotalPrice, totalSum, totalSumFee } from "../../utils/countTotalPrice";
 import { Orders } from "../../entities/Orders";
 import { TypedRequest } from "./types";
 import { io } from "../..";
@@ -163,8 +163,10 @@ export const ordersByDateRange = async (req: Request, res: Response) => {
     const orders = await OrderService.getOrdersByDateRange(startDate, endDate, restaurantId);
     const sum = totalSum(orders);
     const canceled = orders.filter((order) => order.status === "canceled").length;
+    const delivered = orders.filter((order) => order.status === "completed");
+    const serviceFee = totalSumFee(delivered);
 
-    res.status(200).json({ orders, sum, quantity: orders.length, canceled });
+    res.status(200).json({ orders, sum, quantity: orders.length, canceled, delivered, fee_sum: serviceFee });
   } catch (error) {
     handleError(res, error, 400);
   }
