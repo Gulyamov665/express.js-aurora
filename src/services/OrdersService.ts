@@ -110,11 +110,32 @@ export class OrderService {
   }
 
   static async getOrdersByDateRange(startDateStr: string, endDateStr: string, restaurantId: number): Promise<Orders[]> {
-    const startDate = new Date(startDateStr);
-    startDate.setHours(0, 0, 0, 0);
-    
-    const endDate = new Date(endDateStr);
-    endDate.setHours(23, 59, 59, 999);
+    // const startDate = new Date(startDateStr);
+    // startDate.setHours(0, 0, 0, 0);
+
+    // const endDate = new Date(endDateStr);
+    // endDate.setHours(23, 59, 59, 999);
+    const now = new Date();
+
+    // Если дата передана — выставляем время на начало/конец дня
+    let startDate: Date;
+    let endDate: Date;
+
+    if (startDateStr) {
+      startDate = new Date(startDateStr);
+      startDate.setHours(0, 0, 0, 0);
+    } else {
+      startDate = new Date(now);
+      startDate.setHours(0, 0, 0, 0);
+    }
+
+    if (endDateStr) {
+      endDate = new Date(endDateStr);
+      endDate.setHours(23, 59, 59, 999);
+    } else {
+      endDate = new Date(now);
+      endDate.setHours(23, 59, 59, 999);
+    }
 
     const orders = await this.OrdersRepo.find({
       where: {
