@@ -49,3 +49,43 @@ export type ProductItem = {
   thumb: string;
   options: Option;
 };
+
+type Location = {
+  lat: string;
+  long: string;
+};
+
+type User = {
+  location: Location;
+};
+
+type Restaurant = {
+  location: Location;
+};
+
+type DeliveryRule = {
+  id: number;
+  restaurant: number;
+  name: string;
+  description: string;
+  calculation_type: "per_km" | "fixed" | "percent"; // перечисли все свои варианты
+  min_distance: number;
+  max_distance: number;
+  price_per_km: number | null;
+  fixed_price: number | null;
+  price_per_percent: number | null;
+  max_order_price_for_free_delivery: number | null;
+  reverse_calculate: boolean;
+  is_active: boolean;
+};
+
+type Delivery = {
+  type: "per_km" | "fixed" | "percent"; // перечисли свои варианты
+  rule: DeliveryRule;
+};
+
+export type DeliveryData = {
+  user: User;
+  restaurant: Restaurant;
+  delivery: Delivery;
+};

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { UserInfoType, UserLocationType } from "../controllers/orders/types";
 import { Orders } from "../entities/Orders";
-import { DistanceMatrixResponse, DistanceResult, ProductItem } from "./types";
+import { DeliveryData, DistanceMatrixResponse, DistanceResult, ProductItem } from "./types";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -152,5 +152,16 @@ export const getProductById = async (id: number) => {
   } catch (error) {
     console.error("Ошибка при получении продукта:", error);
     return null;
+  }
+};
+
+export const getDeliveryRules = async (restaurant_id: number, user_id: number) => {
+  try {
+    const response = await axios.get<DeliveryData>(
+      `${BASE_DJANGO}/v1/delivery/rule?restaurant_id=${restaurant_id}&user_id=${user_id}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Ошибка при получении DeliveryRules", error);
   }
 };

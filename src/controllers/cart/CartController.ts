@@ -3,17 +3,36 @@ import { Request, Response } from "express";
 import { handleError } from "../../utils/handlerError";
 import { calcTotalPrice } from "../../utils/countTotalPrice";
 import { GetCartType } from "./types";
-import { getVendorStatus } from "../../api/api";
+import { getDeliveryRules, getDistance, getVendorStatus } from "../../api/api";
 import { IAddOrUpdateCartTypeArgs, Product } from "../../services/cartTypes";
 
 export const addToCart = async (req: Request, res: Response) => {
-  const { user_id, restaurant, products }: IAddOrUpdateCartTypeArgs = req.body;
+  const { user_id, restaurant, products, cart_id }: IAddOrUpdateCartTypeArgs = req.body;
 
   const vendorStatus = await getVendorStatus(restaurant);
+
+  let delivery;
+  let distance;
 
   if (!vendorStatus?.is_open) {
     res.status(400).json({ message: vendorStatus?.message, is_open: vendorStatus?.is_open, code: vendorStatus?.code });
     return;
+  }
+
+  if (!cart_id) {
+    console.log("cart_id", cart_id);
+    try {
+      console.log("delivery request");
+      delivery = await getDeliveryRules(restaurant, user_id);
+      distance = await getDistance(
+        Number(delivery?.restaurant.location.lat),
+        Number(delivery?.restaurant.location.long),
+        Number(delivery?.user.location.lat),
+        Number(delivery?.user.location.long)
+      );
+    } catch (error) {
+      console.error("ошибка получения getDeliveryRules в addToCart", error);
+    }
   }
 
   try {
@@ -21,7 +40,7 @@ export const addToCart = async (req: Request, res: Response) => {
       user_id,
       restaurant_id: restaurant,
       newProduct: products,
-      distance: 0,
+      distance: parseFloat(distance?.distance ?? "0"),
     });
 
     res.status(201).json(updatedCart);
