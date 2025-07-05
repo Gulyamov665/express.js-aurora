@@ -8,7 +8,6 @@ import { IAddOrUpdateCartTypeArgs, Product } from "../../services/cartTypes";
 
 export const addToCart = async (req: Request, res: Response) => {
   const { user_id, restaurant, products, cart_id }: IAddOrUpdateCartTypeArgs = req.body;
-
   const vendorStatus = await getVendorStatus(restaurant);
 
   let delivery;
@@ -18,6 +17,8 @@ export const addToCart = async (req: Request, res: Response) => {
     res.status(400).json({ message: vendorStatus?.message, is_open: vendorStatus?.is_open, code: vendorStatus?.code });
     return;
   }
+
+  console.log(cart_id);
 
   if (!cart_id) {
     console.log("cart_id", cart_id);
@@ -34,6 +35,9 @@ export const addToCart = async (req: Request, res: Response) => {
       console.error("ошибка получения getDeliveryRules в addToCart", error);
     }
   }
+
+  console.log(delivery, "deliver");
+  console.log(distance, "distance");
 
   try {
     const updatedCart = await CartService.addOrUpdateCartProducts({
