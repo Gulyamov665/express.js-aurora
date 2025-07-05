@@ -6,4 +6,5 @@ export type GetCartType = {
   user_id: number;
   restaurant: number;
   products: Product[];
+  distance?: number;
 };

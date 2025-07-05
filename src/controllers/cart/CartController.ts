@@ -44,6 +44,7 @@ export const getCartItems = async (req: Request, res: Response) => {
       user: cartData?.user_id,
       vendor: cartData?.restaurant,
       id: cartData?.id,
+      distance: cartData?.distance,
     });
   } catch (error) {
     handleError(res, error, 400);
