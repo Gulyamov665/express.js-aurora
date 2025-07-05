@@ -1,6 +1,6 @@
 import { Column, Entity } from "typeorm";
 import { BaseModel } from "./BaseModel";
-import { Product } from "../services/CartService";
+import { Product } from "../services/cartTypes";
 
 // entities/Orders.ts
 @Entity()
@@ -13,4 +13,7 @@ export class Cart extends BaseModel {
 
   @Column("jsonb")
   products!: Product[];
+
+  @Column({ type: "float", nullable: true })
+  distance?: number;
 }

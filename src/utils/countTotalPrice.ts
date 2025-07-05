@@ -1,5 +1,5 @@
 import { Orders } from "../entities/Orders";
-import { Product } from "../services/CartService";
+import { Product } from "../services/cartTypes";
 
 export const calcTotalPrice = (products: Product[]): number => {
   if (!products || products.length === 0) return 0;

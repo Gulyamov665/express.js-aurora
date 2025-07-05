@@ -1,20 +1,6 @@
 import { AppDataSource } from "../config/database/data-source";
 import { Cart } from "../entities/Cart";
-
-interface IOptions {
-  id: number;
-  name: string;
-  price: number;
-  is_active: boolean;
-}
-export interface Product {
-  id: number;
-  name: string;
-  price: number;
-  photo: string;
-  quantity: number;
-  options?: IOptions;
-}
+import { IAddOrUpdateCartType, Product } from "./cartTypes";
 
 export class CartService {
   static CartRepo = AppDataSource.getRepository(Cart);
@@ -34,7 +20,8 @@ export class CartService {
     return cart;
   }
 
-  static async addOrUpdateCartProducts(user_id: number, restaurant_id: number, newProduct: Product): Promise<Cart> {
+  static async addOrUpdateCartProducts(args: IAddOrUpdateCartType): Promise<Cart> {
+    const { distance, newProduct, restaurant_id, user_id } = args;
     let cart = await this.CartRepo.findOneBy({
       user_id,
       restaurant: restaurant_id,
@@ -45,8 +32,19 @@ export class CartService {
         user_id,
         restaurant: restaurant_id,
         products: [],
+        distance: distance,
       });
     }
+
+    // else {
+    //   // сравнение расстояний с округлением до 1 знака после запятой
+    //   const existingDistance = Math.round((cart.distance ?? 0) * 10) / 10;
+    //   const incomingDistance = Math.round(distance * 10) / 10;
+
+    //   if (existingDistance !== incomingDistance) {
+    //     cart.distance = distance;
+    //   }
+    // }
 
     const existingProduct = cart.products.find((product: Product) => {
       return (

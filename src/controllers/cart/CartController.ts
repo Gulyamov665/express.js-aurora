@@ -1,16 +1,15 @@
-import { CartService, Product } from "../../services/CartService";
+import { CartService } from "../../services/CartService";
 import { Request, Response } from "express";
 import { handleError } from "../../utils/handlerError";
 import { calcTotalPrice } from "../../utils/countTotalPrice";
 import { GetCartType } from "./types";
 import { getVendorStatus } from "../../api/api";
+import { IAddOrUpdateCartTypeArgs, Product } from "../../services/cartTypes";
 
 export const addToCart = async (req: Request, res: Response) => {
-  const { user_id, restaurant, products }: { user_id: number; restaurant: number; products: Product } = req.body;
+  const { user_id, restaurant, products }: IAddOrUpdateCartTypeArgs = req.body;
 
   const vendorStatus = await getVendorStatus(restaurant);
-
-  
 
   if (!vendorStatus?.is_open) {
     res.status(400).json({ message: vendorStatus?.message, is_open: vendorStatus?.is_open, code: vendorStatus?.code });
@@ -18,7 +17,12 @@ export const addToCart = async (req: Request, res: Response) => {
   }
 
   try {
-    const updatedCart = await CartService.addOrUpdateCartProducts(user_id, restaurant, products);
+    const updatedCart = await CartService.addOrUpdateCartProducts({
+      user_id,
+      restaurant_id: restaurant,
+      newProduct: products,
+      distance: 0,
+    });
 
     res.status(201).json(updatedCart);
   } catch (error) {

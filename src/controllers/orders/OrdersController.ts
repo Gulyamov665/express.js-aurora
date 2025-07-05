@@ -6,7 +6,7 @@ import { Orders } from "../../entities/Orders";
 import { TypedRequest } from "./types";
 import { io } from "../..";
 import { sendPushToCouriers } from "../../config/firebase/sendPushHandler";
-import { CartService, Product } from "../../services/CartService";
+import { CartService } from "../../services/CartService";
 import {
   getChannel,
   getCourierInfo,
@@ -16,6 +16,7 @@ import {
   notifyAboutOrderStatusChange,
 } from "../../api/api";
 import { ChangeOrderItemsParams, OrderItemAction } from "../../services/orderTypes";
+import { Product } from "../../services/cartTypes";
 
 export interface CreateOrderDTO {
   created_by: number;
@@ -104,8 +105,6 @@ export const updateOrder = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const updateData = req.body;
   const order = await OrderService.getOrderById(id);
-
-  // if (updateData.status === order?.status) return console.log("same status");
 
   const destination = await getDistance(
     Number(order?.restaurant.lat),
