@@ -5,7 +5,7 @@ import { IAddOrUpdateCartType, Product } from "./cartTypes";
 export class CartService {
   static CartRepo = AppDataSource.getRepository(Cart);
 
-  static async getCartItems(user_id: string, restaurant_id: string) {
+  static async getCartItems(user_id: string, restaurant_id: string, distance?: number) {
     const user = parseInt(user_id);
     const restaurant = parseInt(restaurant_id);
     const cart = await this.CartRepo.findOneBy({
@@ -16,6 +16,7 @@ export class CartService {
     if (!cart) {
       return null;
     }
+    if (distance) cart.distance = distance;
 
     return cart;
   }

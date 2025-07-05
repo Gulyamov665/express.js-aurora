@@ -18,12 +18,8 @@ export const addToCart = async (req: Request, res: Response) => {
     return;
   }
 
-  console.log(cart_id);
-
   if (!cart_id) {
-    console.log("cart_id", cart_id);
     try {
-      console.log("delivery request");
       delivery = await getDeliveryRules(restaurant, user_id);
       distance = await getDistance(
         Number(delivery?.restaurant.location.lat),
@@ -35,9 +31,6 @@ export const addToCart = async (req: Request, res: Response) => {
       console.error("ошибка получения getDeliveryRules в addToCart", error);
     }
   }
-
-  console.log(delivery, "deliver");
-  console.log(distance, "distance");
 
   try {
     const updatedCart = await CartService.addOrUpdateCartProducts({
@@ -56,9 +49,31 @@ export const addToCart = async (req: Request, res: Response) => {
 export const getCartItems = async (req: Request, res: Response) => {
   const user_id = req.query.user_id as string; // Приведение к строке
   const restaurant_id = req.query.restaurant_id as string; // Приведение к строке
+  const loc_change = req.query.loc_change === "true"; // Приведение к строке
+
+  let delivery;
+  let distance;
+
+  if (loc_change) {
+    try {
+      delivery = await getDeliveryRules(Number(restaurant_id), Number(user_id));
+      distance = await getDistance(
+        Number(delivery?.restaurant.location.lat),
+        Number(delivery?.restaurant.location.long),
+        Number(delivery?.user.location.lat),
+        Number(delivery?.user.location.long)
+      );
+    } catch (error) {
+      console.error("ошибка получения getDeliveryRules в addToCart", error);
+    }
+  }
 
   try {
-    const cartData: GetCartType | null = await CartService.getCartItems(user_id, restaurant_id);
+    const cartData: GetCartType | null = await CartService.getCartItems(
+      user_id,
+      restaurant_id,
+      parseFloat(distance?.distance ?? "0")
+    );
     const totalPrice = cartData ? calcTotalPrice(cartData.products) : null;
 
     res.status(200).json({
