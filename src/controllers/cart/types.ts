@@ -1,4 +1,4 @@
-import { Product } from "../../services/CartService";
+import { Product } from "../../services/cartTypes";
 
 export type GetCartType = {
   id: number;
