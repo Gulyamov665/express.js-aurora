@@ -85,8 +85,8 @@ export const getCartItems = async (req: Request, res: Response) => {
         calculation_type: cartData?.delivery?.calculation_type,
         distance: cartData.destination?.distance,
         orderPrice: totalPrice ?? 0,
-        price_per_km: cartData.delivery.price_per_km,
-        price_per_percent: cartData.delivery.price_per_percent,
+        price_per_km: cartData.delivery?.price_per_km,
+        price_per_percent: cartData.delivery?.price_per_percent,
       });
     }
 
