@@ -37,16 +37,6 @@ export class CartService {
       });
     }
 
-    // else {
-    //   // сравнение расстояний с округлением до 1 знака после запятой
-    //   const existingDistance = Math.round((cart.distance ?? 0) * 10) / 10;
-    //   const incomingDistance = Math.round(distance * 10) / 10;
-
-    //   if (existingDistance !== incomingDistance) {
-    //     cart.distance = distance;
-    //   }
-    // }
-
     const existingProduct = cart.products.find((product: Product) => {
       return (
         product.id === newProduct.id &&
