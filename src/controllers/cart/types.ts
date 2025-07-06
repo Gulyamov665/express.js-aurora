@@ -1,3 +1,4 @@
+import { DistanceResult } from "../../api/types";
 import { Product } from "../../services/cartTypes";
 
 export type GetCartType = {
@@ -6,5 +7,5 @@ export type GetCartType = {
   user_id: number;
   restaurant: number;
   products: Product[];
-  distance?: number;
+  destination: DistanceResult;
 };

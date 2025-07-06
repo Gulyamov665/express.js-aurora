@@ -1,3 +1,4 @@
+import { DistanceResult } from "../api/types";
 import { AppDataSource } from "../config/database/data-source";
 import { Cart } from "../entities/Cart";
 import { IAddOrUpdateCartType, Product } from "./cartTypes";
@@ -5,7 +6,7 @@ import { IAddOrUpdateCartType, Product } from "./cartTypes";
 export class CartService {
   static CartRepo = AppDataSource.getRepository(Cart);
 
-  static async getCartItems(user_id: string, restaurant_id: string, distance?: number) {
+  static async getCartItems(user_id: string, restaurant_id: string, destination?: DistanceResult) {
     const user = parseInt(user_id);
     const restaurant = parseInt(restaurant_id);
     const cart = await this.CartRepo.findOneBy({
@@ -16,8 +17,8 @@ export class CartService {
     if (!cart) {
       return null;
     }
-    if (distance) {
-      cart.distance = distance;
+    if (destination) {
+      cart.destination = destination;
       await this.CartRepo.save(cart);
     }
 
@@ -25,21 +26,23 @@ export class CartService {
   }
 
   static async addOrUpdateCartProducts(args: IAddOrUpdateCartType): Promise<Cart> {
-    const { distance, newProduct, restaurant_id, user_id } = args;
+    const { destination, newProduct, restaurant_id, user_id } = args;
     let cart = await this.CartRepo.findOneBy({
       user_id,
       restaurant: restaurant_id,
     });
 
     if (!cart) {
+      console.log("!cart");
       cart = this.CartRepo.create({
         user_id,
         restaurant: restaurant_id,
         products: [],
-        distance: distance,
+        destination,
       });
     }
 
+    console.log(cart);
     const existingProduct = cart.products.find((product: Product) => {
       return (
         product.id === newProduct.id &&

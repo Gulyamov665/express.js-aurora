@@ -8,10 +8,11 @@ import { IAddOrUpdateCartTypeArgs, Product } from "../../services/cartTypes";
 
 export const addToCart = async (req: Request, res: Response) => {
   const { user_id, restaurant, products, cart_id }: IAddOrUpdateCartTypeArgs = req.body;
+
   const vendorStatus = await getVendorStatus(restaurant);
 
   let delivery;
-  let distance;
+  let destination;
 
   if (!vendorStatus?.is_open) {
     res.status(400).json({ message: vendorStatus?.message, is_open: vendorStatus?.is_open, code: vendorStatus?.code });
@@ -21,7 +22,8 @@ export const addToCart = async (req: Request, res: Response) => {
   if (!cart_id) {
     try {
       delivery = await getDeliveryRules(restaurant, user_id);
-      distance = await getDistance(
+      console.log(delivery);
+      destination = await getDistance(
         Number(delivery?.restaurant.location.lat),
         Number(delivery?.restaurant.location.long),
         Number(delivery?.user.location.lat),
@@ -37,7 +39,7 @@ export const addToCart = async (req: Request, res: Response) => {
       user_id,
       restaurant_id: restaurant,
       newProduct: products,
-      distance: parseFloat(distance?.distance ?? "0"),
+      destination: destination ?? undefined,
     });
 
     res.status(201).json(updatedCart);
@@ -52,12 +54,12 @@ export const getCartItems = async (req: Request, res: Response) => {
   const loc_change = req.query.loc_change === "true"; // Приведение к строке
 
   let delivery;
-  let distance;
+  let destination;
 
   if (loc_change) {
     try {
       delivery = await getDeliveryRules(Number(restaurant_id), Number(user_id));
-      distance = await getDistance(
+      destination = await getDistance(
         Number(delivery?.restaurant.location.lat),
         Number(delivery?.restaurant.location.long),
         Number(delivery?.user.location.lat),
@@ -72,8 +74,9 @@ export const getCartItems = async (req: Request, res: Response) => {
     const cartData: GetCartType | null = await CartService.getCartItems(
       user_id,
       restaurant_id,
-      parseFloat(distance?.distance ?? "0")
+      destination ?? undefined
     );
+
     const totalPrice = cartData ? calcTotalPrice(cartData.products) : null;
 
     res.status(200).json({
@@ -82,7 +85,7 @@ export const getCartItems = async (req: Request, res: Response) => {
       user: cartData?.user_id,
       vendor: cartData?.restaurant,
       id: cartData?.id,
-      distance: cartData?.distance,
+      destination: cartData?.destination.distance,
     });
   } catch (error) {
     handleError(res, error, 400);

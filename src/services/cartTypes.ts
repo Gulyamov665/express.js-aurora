@@ -1,3 +1,5 @@
+import { DistanceResult } from "../api/types";
+
 interface IOptions {
   id: number;
   name: string;
@@ -18,7 +20,7 @@ export interface IAddOrUpdateCartType {
   user_id: number;
   restaurant_id: number;
   newProduct: Product;
-  distance: number;
+  destination?: DistanceResult;
 }
 
 export interface IAddOrUpdateCartTypeArgs {
