@@ -16,7 +16,10 @@ export class CartService {
     if (!cart) {
       return null;
     }
-    if (distance) cart.distance = distance;
+    if (distance) {
+      cart.distance = distance;
+      await this.CartRepo.save(cart);
+    }
 
     return cart;
   }
@@ -132,5 +135,15 @@ export class CartService {
       console.error("Ошибка при удалении корзины:", error);
       throw new Error("Не удалось удалить корзину");
     }
+  }
+
+  static async getCartById(cart_id: number): Promise<Cart | null> {
+    const cart = await this.CartRepo.findOneBy({ id: cart_id });
+
+    if (!cart) {
+      return null;
+    }
+
+    return cart;
   }
 }

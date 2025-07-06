@@ -7,15 +7,9 @@ import { TypedRequest } from "./types";
 import { io } from "../..";
 import { sendPushToCouriers } from "../../config/firebase/sendPushHandler";
 import { CartService } from "../../services/CartService";
-import {
-  getChannel,
-  getCourierInfo,
-  getDistance,
-  getUserInfo,
-  notifyAboutNewOrder,
-  notifyAboutOrderStatusChange,
-} from "../../api/api";
-import { ChangeOrderItemsParams, OrderItemAction } from "../../services/orderTypes";
+import { getChannel, getCourierInfo, getDistance } from "../../api/api";
+import { getUserInfo, notifyAboutNewOrder, notifyAboutOrderStatusChange } from "../../api/api";
+import { ChangeOrderItemsParams } from "../../services/orderTypes";
 import { Product } from "../../services/cartTypes";
 
 export interface CreateOrderDTO {
@@ -47,6 +41,11 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
   const fee = 3500;
   try {
     const data = req.body;
+    const cart_data = await CartService.getCartById(40);
+
+    // console.log(cart_data);
+    // if (!cart_data) return;
+
     const { fullName: createdByFullName, location } = await getUserInfo(Number(data?.created_by));
 
     const totalPrice = calcTotalPrice(data.products);
