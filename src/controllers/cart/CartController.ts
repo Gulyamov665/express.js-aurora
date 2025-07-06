@@ -5,6 +5,7 @@ import { calcTotalPrice } from "../../utils/countTotalPrice";
 import { GetCartType } from "./types";
 import { getDeliveryRules, getDistance, getVendorStatus } from "../../api/api";
 import { IAddOrUpdateCartTypeArgs, Product } from "../../services/cartTypes";
+import { deliveryPrice } from "../../utils/tools";
 
 export const addToCart = async (req: Request, res: Response) => {
   const { user_id, restaurant, products, cart_id }: IAddOrUpdateCartTypeArgs = req.body;
@@ -22,7 +23,6 @@ export const addToCart = async (req: Request, res: Response) => {
   if (!cart_id) {
     try {
       delivery = await getDeliveryRules(restaurant, user_id);
-      console.log(delivery);
       destination = await getDistance(
         Number(delivery?.restaurant.location.lat),
         Number(delivery?.restaurant.location.long),
@@ -40,6 +40,7 @@ export const addToCart = async (req: Request, res: Response) => {
       restaurant_id: restaurant,
       newProduct: products,
       destination: destination ?? undefined,
+      delivery,
     });
 
     res.status(201).json(updatedCart);
@@ -78,6 +79,16 @@ export const getCartItems = async (req: Request, res: Response) => {
     );
 
     const totalPrice = cartData ? calcTotalPrice(cartData.products) : null;
+    let deliveryCoast;
+    if (cartData?.destination?.distance) {
+      deliveryCoast = deliveryPrice({
+        calculation_type: cartData?.delivery?.calculation_type,
+        distance: cartData.destination?.distance,
+        orderPrice: totalPrice ?? 0,
+        price_per_km: cartData.delivery.price_per_km,
+        price_per_percent: cartData.delivery.price_per_percent,
+      });
+    }
 
     res.status(200).json({
       products: cartData?.products || [],
@@ -85,7 +96,8 @@ export const getCartItems = async (req: Request, res: Response) => {
       user: cartData?.user_id,
       vendor: cartData?.restaurant,
       id: cartData?.id,
-      destination: cartData?.destination.distance,
+      destination: cartData?.destination?.distance,
+      delivery_price: deliveryCoast,
     });
   } catch (error) {
     handleError(res, error, 400);

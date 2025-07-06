@@ -63,7 +63,7 @@ type Restaurant = {
   location: Location;
 };
 
-type DeliveryRule = {
+export type DeliveryRule = {
   id: number;
   restaurant: number;
   name: string;
@@ -79,7 +79,7 @@ type DeliveryRule = {
   is_active: boolean;
 };
 
-type Delivery = {
+export type Delivery = {
   type: "per_km" | "fixed" | "percent"; // перечисли свои варианты
   rule: DeliveryRule;
 };

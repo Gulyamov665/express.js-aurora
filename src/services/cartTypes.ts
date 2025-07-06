@@ -1,4 +1,4 @@
-import { DistanceResult } from "../api/types";
+import { DeliveryData, DistanceResult } from "../api/types";
 
 interface IOptions {
   id: number;
@@ -21,6 +21,7 @@ export interface IAddOrUpdateCartType {
   restaurant_id: number;
   newProduct: Product;
   destination?: DistanceResult;
+  delivery?: DeliveryData;
 }
 
 export interface IAddOrUpdateCartTypeArgs {

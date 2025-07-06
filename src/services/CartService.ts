@@ -26,23 +26,26 @@ export class CartService {
   }
 
   static async addOrUpdateCartProducts(args: IAddOrUpdateCartType): Promise<Cart> {
-    const { destination, newProduct, restaurant_id, user_id } = args;
+    const { destination, newProduct, restaurant_id, user_id, delivery } = args;
     let cart = await this.CartRepo.findOneBy({
       user_id,
       restaurant: restaurant_id,
     });
 
     if (!cart) {
-      console.log("!cart");
       cart = this.CartRepo.create({
         user_id,
         restaurant: restaurant_id,
         products: [],
         destination,
+        delivery: {
+          calculation_type: delivery?.delivery.type,
+          price_per_km: delivery?.delivery.rule.price_per_km,
+          price_per_percent: delivery?.delivery.rule.price_per_percent,
+        },
       });
     }
 
-    console.log(cart);
     const existingProduct = cart.products.find((product: Product) => {
       return (
         product.id === newProduct.id &&
