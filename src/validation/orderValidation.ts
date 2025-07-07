@@ -13,6 +13,7 @@ const bodyAllowedFields = [
   "location",
   "user_phone_number",
   "cart_id",
+  "delivery_price",
 ];
 const productAllowedFields = ["id", "price", "quantity", "name", "photo", "options"];
 

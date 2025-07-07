@@ -67,4 +67,7 @@ export class Orders extends BaseModel {
 
   @Column({ type: "int", default: 3500, nullable: true })
   fee!: number;
+
+  @Column({ type: "int", default: 0, nullable: true })
+  delivery_price!: number;
 }
