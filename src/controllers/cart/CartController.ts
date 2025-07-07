@@ -76,28 +76,13 @@ export const getCartItems = async (req: Request, res: Response) => {
       destination ?? undefined
     );
 
-    if (!cartData) {
-      throw new Error("Корзина не найдена");
-    }
-
-    const totalPrice = calcTotalPrice(cartData.products);
+    const totalPrice = cartData ? calcTotalPrice(cartData.products) : null;
 
     const deliveryCoast = await getDeliveryPrice(
-      cartData?.restaurant,
-      totalPrice,
+      cartData?.restaurant || 0,
+      totalPrice || 0,
       parseFloat(cartData?.destination.distance || "0")
     );
-
-    // if (cartData?.destination?.distance) {
-    //   deliveryCoast = deliveryPrice({
-    //     calculation_type: cartData?.delivery?.calculation_type,
-    //     distance: cartData.destination?.distance,
-    //     orderPrice: totalPrice ?? 0,
-    //     price_per_km: cartData.delivery?.price_per_km,
-    //     price_per_percent: cartData.delivery?.price_per_percent,
-    //     reverse: cartData.delivery?.reverse_calculate,
-    //   });
-    // }
 
     res.status(200).json({
       products: cartData?.products || [],

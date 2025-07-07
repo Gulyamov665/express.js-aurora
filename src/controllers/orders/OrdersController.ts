@@ -43,6 +43,7 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
     const data = req.body;
 
     const { fullName: createdByFullName, location } = await getUserInfo(Number(data?.created_by));
+    const cart = await CartService.getCartItems(String(data.user_id), String(data.restaurant.id));
 
     const totalPrice = calcTotalPrice(data.products);
     const orderData = {
@@ -50,6 +51,7 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
       total_price: totalPrice && totalPrice + fee,
       created_by: createdByFullName,
       location,
+      destination: cart?.destination,
     };
 
     const newOrder = await OrderService.createOrder(orderData);
@@ -98,17 +100,15 @@ export const getOrderByUserId = async (req: Request, res: Response) => {
 
 export const updateOrder = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
-  const updateData = req.body;
-  const order = await OrderService.getOrderById(id);
+  const data = req.body;
+  // const order = await OrderService.getOrderById(id);
 
-  const destination = await getDistance(
-    Number(order?.restaurant.lat),
-    Number(order?.restaurant.long),
-    Number(order?.location.lat),
-    Number(order?.location.long)
-  );
-
-  const data = { ...updateData, destination };
+  // const destination = await getDistance(
+  //   Number(order?.restaurant.lat),
+  //   Number(order?.restaurant.long),
+  //   Number(order?.location.lat),
+  //   Number(order?.location.long)
+  // );
 
   try {
     const updatedOrder = await OrderService.updateOrder(id, data);
