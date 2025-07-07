@@ -48,7 +48,7 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
     const totalPrice = calcTotalPrice(data.products);
     const orderData = {
       ...data,
-      total_price: totalPrice && totalPrice + fee,
+      total_price: totalPrice && totalPrice + fee + data.delivery_price,
       created_by: createdByFullName,
       location,
       destination: cart?.destination,
