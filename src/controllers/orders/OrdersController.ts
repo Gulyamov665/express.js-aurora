@@ -41,10 +41,6 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
   const fee = 3500;
   try {
     const data = req.body;
-    const cart_data = await CartService.getCartById(40);
-
-    // console.log(cart_data);
-    // if (!cart_data) return;
 
     const { fullName: createdByFullName, location } = await getUserInfo(Number(data?.created_by));
 
