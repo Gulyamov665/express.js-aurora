@@ -3,9 +3,8 @@ import { Request, Response } from "express";
 import { handleError } from "../../utils/handlerError";
 import { calcTotalPrice } from "../../utils/countTotalPrice";
 import { GetCartType } from "./types";
-import { getDeliveryRules, getDistance, getVendorStatus } from "../../api/api";
+import { getDeliveryPrice, getDeliveryRules, getDistance, getVendorStatus } from "../../api/api";
 import { IAddOrUpdateCartTypeArgs, Product } from "../../services/cartTypes";
-import { deliveryPrice } from "../../utils/tools";
 
 export const addToCart = async (req: Request, res: Response) => {
   const { user_id, restaurant, products, cart_id }: IAddOrUpdateCartTypeArgs = req.body;
@@ -40,7 +39,6 @@ export const addToCart = async (req: Request, res: Response) => {
       restaurant_id: restaurant,
       newProduct: products,
       destination: destination ?? undefined,
-      delivery,
     });
 
     res.status(201).json(updatedCart);
@@ -78,17 +76,28 @@ export const getCartItems = async (req: Request, res: Response) => {
       destination ?? undefined
     );
 
-    const totalPrice = cartData ? calcTotalPrice(cartData.products) : null;
-    let deliveryCoast;
-    if (cartData?.destination?.distance) {
-      deliveryCoast = deliveryPrice({
-        calculation_type: cartData?.delivery?.calculation_type,
-        distance: cartData.destination?.distance,
-        orderPrice: totalPrice ?? 0,
-        price_per_km: cartData.delivery?.price_per_km,
-        price_per_percent: cartData.delivery?.price_per_percent,
-      });
+    if (!cartData) {
+      throw new Error("Корзина не найдена");
     }
+
+    const totalPrice = calcTotalPrice(cartData.products);
+
+    const deliveryCoast = await getDeliveryPrice(
+      cartData?.restaurant,
+      totalPrice,
+      parseFloat(cartData?.destination.distance || "0")
+    );
+
+    // if (cartData?.destination?.distance) {
+    //   deliveryCoast = deliveryPrice({
+    //     calculation_type: cartData?.delivery?.calculation_type,
+    //     distance: cartData.destination?.distance,
+    //     orderPrice: totalPrice ?? 0,
+    //     price_per_km: cartData.delivery?.price_per_km,
+    //     price_per_percent: cartData.delivery?.price_per_percent,
+    //     reverse: cartData.delivery?.reverse_calculate,
+    //   });
+    // }
 
     res.status(200).json({
       products: cartData?.products || [],
@@ -97,7 +106,7 @@ export const getCartItems = async (req: Request, res: Response) => {
       vendor: cartData?.restaurant,
       id: cartData?.id,
       destination: cartData?.destination?.distance,
-      delivery_price: deliveryCoast,
+      delivery_price: deliveryCoast?.price || 0,
     });
   } catch (error) {
     handleError(res, error, 400);

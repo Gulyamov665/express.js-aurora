@@ -1,5 +1,4 @@
-import { DistanceResult } from "../../api/types";
-import { DeliverySnapshot } from "../../entities/Cart";
+import { DeliveryRule, DistanceResult } from "../../api/types";
 import { Product } from "../../services/cartTypes";
 
 export type GetCartType = {
@@ -9,5 +8,5 @@ export type GetCartType = {
   restaurant: number;
   products: Product[];
   destination: DistanceResult;
-  delivery: DeliverySnapshot;
+  delivery: DeliveryRule;
 };

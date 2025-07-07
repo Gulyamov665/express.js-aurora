@@ -26,7 +26,7 @@ export class CartService {
   }
 
   static async addOrUpdateCartProducts(args: IAddOrUpdateCartType): Promise<Cart> {
-    const { destination, newProduct, restaurant_id, user_id, delivery } = args;
+    const { destination, newProduct, restaurant_id, user_id } = args;
     let cart = await this.CartRepo.findOneBy({
       user_id,
       restaurant: restaurant_id,
@@ -38,11 +38,6 @@ export class CartService {
         restaurant: restaurant_id,
         products: [],
         destination,
-        delivery: {
-          calculation_type: delivery?.delivery.type,
-          price_per_km: delivery?.delivery.rule.price_per_km,
-          price_per_percent: delivery?.delivery.rule.price_per_percent,
-        },
       });
     }
 

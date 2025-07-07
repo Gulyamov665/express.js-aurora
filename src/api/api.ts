@@ -1,7 +1,7 @@
 import axios from "axios";
 import { UserInfoType, UserLocationType } from "../controllers/orders/types";
 import { Orders } from "../entities/Orders";
-import { DeliveryData, DistanceMatrixResponse, DistanceResult, ProductItem } from "./types";
+import { DeliveryData, DistanceMatrixResponse, DistanceResult, IGetPriceResponse, ProductItem } from "./types";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -163,5 +163,16 @@ export const getDeliveryRules = async (restaurant_id: number, user_id: number) =
     return response.data;
   } catch (error) {
     console.error("Ошибка при получении DeliveryRules", error);
+  }
+};
+
+export const getDeliveryPrice = async (vendor_id: number, total_price: number, distance: number) => {
+  try {
+    const response = await axios.get<IGetPriceResponse>(
+      `${BASE_DJANGO}/v1/delivery/calculate?vendor_id=${vendor_id}&order_cost=${total_price}&distance=${distance}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Ошибка при получении getDeliveryPrice", error);
   }
 };

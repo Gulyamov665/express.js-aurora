@@ -89,3 +89,9 @@ export type DeliveryData = {
   restaurant: Restaurant;
   delivery: Delivery;
 };
+
+export interface IGetPriceResponse {
+  message: string;
+  price: number | undefined;
+  code: number;
+}
