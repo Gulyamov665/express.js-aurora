@@ -81,7 +81,7 @@ export const getCartItems = async (req: Request, res: Response) => {
     const deliveryCoast = await getDeliveryPrice(
       cartData?.restaurant || 0,
       totalPrice || 0,
-      parseFloat(cartData?.destination.distance || "0")
+      parseFloat(cartData?.destination?.distance || "0")
     );
 
     res.status(200).json({
