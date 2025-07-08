@@ -103,10 +103,10 @@ export class CartService {
     }
 
     // Если корзина пуста — можно удалить корзину (опционально)
-    if (cart.products.length === 0) {
-      await this.CartRepo.delete({ user_id, restaurant: restaurant_id });
-      return null;
-    }
+    // if (cart.products.length === 0) {
+    //   await this.CartRepo.delete({ user_id, restaurant: restaurant_id });
+    //   return null;
+    // }
 
     return await this.CartRepo.save(cart);
   }
