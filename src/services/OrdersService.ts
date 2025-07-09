@@ -185,7 +185,7 @@ export class OrderService {
         where: {
           created_at: Between(start, end),
           courier: Raw((alias) => `${alias} @> '{"id": ${courierId}}'`),
-          status: In(["completed", "on_the_way"]),
+          status: In(["completed", "on_the_way", "prepare"]),
         },
         order: { created_at: "DESC" },
       });
