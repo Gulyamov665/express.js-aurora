@@ -213,7 +213,9 @@ export const getCourierStats = async (req: Request, res: Response) => {
     const stats = {
       today: {
         deliveries: orders.filter((order) => order.status === "completed").length,
-        earnings: 0,
+        earnings: orders
+          .filter((order) => order.status === "completed")
+          .reduce((total, order) => total + (order.delivery_price || 0), 0),
         time: "0ч 0м",
         goal: orders.length, // цель по заказам
         yesterdayDeliveries: 10,
