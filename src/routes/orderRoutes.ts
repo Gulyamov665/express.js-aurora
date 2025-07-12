@@ -14,13 +14,13 @@ import {
 } from "../controllers/orders/OrdersController";
 import { orderValidation } from "../validation/orderValidation";
 import { validate } from "../middlewares/validationMiddleware";
-// import { authenticateJWT } from "../middlewares/authCheck";
+import { authenticateJWT } from "../middlewares/authCheck";
 
 export const orderRoutes = Router();
 // orderRoutes.use(authenticateJWT);
 
 orderRoutes.get("/", getAllOrders);
-orderRoutes.post("/", orderValidation, validate, createOrder);
+orderRoutes.post("/", orderValidation, authenticateJWT, validate, createOrder);
 orderRoutes.get("/status", getOrdersByStatus);
 orderRoutes.get("/:id", getOrderById);
 orderRoutes.put("/update/:id", updateOrder);
