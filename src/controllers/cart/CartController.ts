@@ -22,6 +22,7 @@ export const addToCart = async (req: Request, res: Response) => {
 
   if (!cart_id) {
     try {
+      console.log("addToCart");
       delivery = await getDeliveryRules(restaurant, user_id);
       destination = await getDistance(
         Number(delivery?.restaurant.location.lat),
@@ -31,6 +32,7 @@ export const addToCart = async (req: Request, res: Response) => {
       );
       if (destination) {
         destination.distance = normalizeDistance(destination?.distance);
+        console.log("addToCart destination");
       }
     } catch (error) {
       console.error("ошибка получения getDeliveryRules в addToCart", error);
@@ -61,6 +63,7 @@ export const getCartItems = async (req: Request, res: Response) => {
 
   if (loc_change) {
     try {
+      console.log('getCartItems')
       delivery = await getDeliveryRules(Number(restaurant_id), Number(user_id));
       destination = await getDistance(
         Number(delivery?.restaurant.location.lat),
@@ -69,6 +72,8 @@ export const getCartItems = async (req: Request, res: Response) => {
         Number(delivery?.user.location.long)
       );
       if (destination) {
+      console.log('getCartItems destination')
+
         destination.distance = normalizeDistance(destination?.distance);
       }
     } catch (error) {
