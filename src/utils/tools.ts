@@ -14,3 +14,16 @@ export const deliveryPrice = (args: IDelivery): number => {
 
   return 0;
 };
+
+export function normalizeDistance(distance: string): string {
+  // if (distance.includes("km")) return distance;
+
+  if (distance.includes("m") && !distance.includes("km")) {
+    // Получаем число, убираем "m", делим на 1000 и округляем до 2 знаков
+    const meters = parseFloat(distance.replace("m", "").trim());
+    const km = (meters / 1000).toFixed(2);
+    return `${km} km`;
+  }
+  // Если уже в километрах — возвращаем как есть
+  return distance;
+}

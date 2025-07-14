@@ -5,6 +5,7 @@ import { calcTotalPrice } from "../../utils/countTotalPrice";
 import { GetCartType } from "./types";
 import { getDeliveryPrice, getDeliveryRules, getDistance, getVendorStatus } from "../../api/api";
 import { IAddOrUpdateCartTypeArgs, Product } from "../../services/cartTypes";
+import { normalizeDistance } from "../../utils/tools";
 
 export const addToCart = async (req: Request, res: Response) => {
   const { user_id, restaurant, products, cart_id }: IAddOrUpdateCartTypeArgs = req.body;
@@ -28,6 +29,9 @@ export const addToCart = async (req: Request, res: Response) => {
         Number(delivery?.user.location.lat),
         Number(delivery?.user.location.long)
       );
+      if (destination) {
+        destination.distance = normalizeDistance(destination?.distance);
+      }
     } catch (error) {
       console.error("ошибка получения getDeliveryRules в addToCart", error);
     }
@@ -64,6 +68,9 @@ export const getCartItems = async (req: Request, res: Response) => {
         Number(delivery?.user.location.lat),
         Number(delivery?.user.location.long)
       );
+      if (destination) {
+        destination.distance = normalizeDistance(destination?.distance);
+      }
     } catch (error) {
       console.error("ошибка получения getDeliveryRules в addToCart", error);
     }
