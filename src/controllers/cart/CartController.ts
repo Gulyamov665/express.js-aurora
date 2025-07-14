@@ -22,7 +22,6 @@ export const addToCart = async (req: Request, res: Response) => {
 
   if (!cart_id) {
     try {
-      console.log("addToCart");
       delivery = await getDeliveryRules(restaurant, user_id);
       destination = await getDistance(
         Number(delivery?.restaurant.location.lat),
@@ -32,7 +31,6 @@ export const addToCart = async (req: Request, res: Response) => {
       );
       if (destination) {
         destination.distance = normalizeDistance(destination?.distance);
-        console.log("addToCart destination");
       }
     } catch (error) {
       console.error("ошибка получения getDeliveryRules в addToCart", error);
@@ -63,7 +61,6 @@ export const getCartItems = async (req: Request, res: Response) => {
 
   if (loc_change) {
     try {
-      console.log('getCartItems')
       delivery = await getDeliveryRules(Number(restaurant_id), Number(user_id));
       destination = await getDistance(
         Number(delivery?.restaurant.location.lat),
@@ -72,12 +69,10 @@ export const getCartItems = async (req: Request, res: Response) => {
         Number(delivery?.user.location.long)
       );
       if (destination) {
-      console.log('getCartItems destination')
-
         destination.distance = normalizeDistance(destination?.distance);
       }
     } catch (error) {
-      console.error("ошибка получения getDeliveryRules в addToCart", error);
+      console.error("ошибка получения getDeliveryRules в getCartItems", error);
     }
   }
 
@@ -90,11 +85,15 @@ export const getCartItems = async (req: Request, res: Response) => {
 
     const totalPrice = cartData ? calcTotalPrice(cartData.products) : null;
 
-    const deliveryCoast = await getDeliveryPrice(
-      cartData?.restaurant || 0,
-      totalPrice || 0,
-      parseFloat(cartData?.destination?.distance || "0")
-    );
+    let deliveryCoast;
+
+    if (cartData?.restaurant && totalPrice) {
+      deliveryCoast = await getDeliveryPrice(
+        cartData?.restaurant || 0,
+        totalPrice || 0,
+        parseFloat(cartData?.destination?.distance || "0")
+      );
+    }
 
     res.status(200).json({
       products: cartData?.products || [],
