@@ -70,4 +70,7 @@ export class Orders extends BaseModel {
 
   @Column({ type: "int", default: 0, nullable: true })
   delivery_price!: number;
+
+  @Column({ type: "varchar", default: "" })
+  comment!: string;
 }
