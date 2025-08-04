@@ -102,7 +102,6 @@ export const updateOrder = async (req: Request, res: Response) => {
   const id = Number(req.params.id);
   const data = req.body;
 
-
   try {
     const updatedOrder = await OrderService.updateOrder(id, data);
     if (!updatedOrder) {

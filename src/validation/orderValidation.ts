@@ -14,6 +14,7 @@ const bodyAllowedFields = [
   "user_phone_number",
   "cart_id",
   "delivery_price",
+  "comment",
 ];
 const productAllowedFields = ["id", "price", "quantity", "name", "photo", "options"];
 
