@@ -138,7 +138,7 @@ export const findOrderById = async (req: Request, res: Response) => {
 };
 
 export const ordersByDateRange = async (req: Request, res: Response) => {
-  const { startDate, endDate, restaurantId } = req.body;
+  const { startDate, endDate, restaurantId, courierId } = req.body;
 
   if (!restaurantId) {
     res.status(400).json({ message: "restaurantId is required" });
@@ -146,7 +146,7 @@ export const ordersByDateRange = async (req: Request, res: Response) => {
   }
 
   try {
-    const orders = await OrderService.getOrdersByDateRange(startDate, endDate, restaurantId);
+    const orders = await OrderService.getOrdersByDateRange(startDate, endDate, restaurantId, courierId);
     const sum = totalSum(orders);
     const canceled = orders.filter((order) => order.status === "canceled").length;
     const delivered = orders.filter((order) => order.status === "completed");

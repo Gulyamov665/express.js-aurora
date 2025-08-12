@@ -1,4 +1,4 @@
-import { Between, In, Raw } from "typeorm";
+import { Between, FindOptionsWhere, In, Raw } from "typeorm";
 import { AppDataSource } from "../config/database/data-source";
 import { Orders } from "../entities/Orders";
 import { getProductById } from "../api/api";
@@ -109,7 +109,12 @@ export class OrderService {
     return await this.OrdersRepo.findOneBy({ id });
   }
 
-  static async getOrdersByDateRange(startDateStr: string, endDateStr: string, restaurantId: number): Promise<Orders[]> {
+  static async getOrdersByDateRange(
+    startDateStr: string,
+    endDateStr: string,
+    restaurantId: number,
+    courierId?: string
+  ): Promise<Orders[]> {
     const now = new Date();
 
     // Если дата передана — выставляем время на начало/конец дня
@@ -132,11 +137,18 @@ export class OrderService {
       endDate.setHours(23, 59, 59, 999);
     }
 
+    const where: FindOptionsWhere<Orders> = {
+      created_at: Between(startDate, endDate),
+      restaurant: Raw((alias) => `${alias} @> :restaurantId`, { restaurantId: JSON.stringify({ id: restaurantId }) }),
+    };
+
+    // Если передан courierId — добавляем в фильтр
+    if (courierId) {
+      where.courier = Raw((alias) => `${alias} @> :courierId`, { courierId: JSON.stringify({ id: courierId }) });
+    }
+
     const orders = await this.OrdersRepo.find({
-      where: {
-        created_at: Between(startDate, endDate),
-        restaurant: Raw((alias) => `${alias} @> '{"id": ${restaurantId}}'`),
-      },
+      where,
       order: { created_at: "DESC" },
     });
 
@@ -200,6 +212,7 @@ export class OrderService {
       order: { created_at: "DESC" },
     });
   }
+
   static async getOrderById(id: number): Promise<Orders | null> {
     return await this.OrdersRepo.findOneBy({ id });
   }
