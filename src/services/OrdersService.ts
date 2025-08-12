@@ -113,7 +113,7 @@ export class OrderService {
     startDateStr: string,
     endDateStr: string,
     restaurantId: number,
-    courierId?: string
+    courierId?: number
   ): Promise<Orders[]> {
     const now = new Date();
 

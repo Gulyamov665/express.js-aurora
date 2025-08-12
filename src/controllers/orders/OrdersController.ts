@@ -147,9 +147,9 @@ export const ordersByDateRange = async (req: Request, res: Response) => {
 
   try {
     const orders = await OrderService.getOrdersByDateRange(startDate, endDate, restaurantId, courierId);
-    const sum = totalSum(orders);
     const canceled = orders.filter((order) => order.status === "canceled").length;
     const delivered = orders.filter((order) => order.status === "completed");
+    const sum = totalSum(delivered);
     const serviceFee = totalSumFee(delivered);
 
     res
