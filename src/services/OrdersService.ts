@@ -144,7 +144,8 @@ export class OrderService {
 
     // Если передан courierId — добавляем в фильтр
     if (courierId) {
-      where.courier = Raw((alias) => `${alias} @> :courierId`, { courierId: JSON.stringify({ id: courierId }) });
+      const courierIdNum = Number(courierId); // Приводим к числу
+      where.courier = Raw((alias) => `${alias} @> :courierId`, { courierId: JSON.stringify({ id: courierIdNum }) });
     }
 
     const orders = await this.OrdersRepo.find({
