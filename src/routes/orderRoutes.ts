@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { changeOrderComposition, createOrder } from "../controllers/orders/OrdersController";
+import { changeOrderComposition, createOrder, createOrderNative } from "../controllers/orders/OrdersController";
 import { findOrderById, getAllOrders, getCourierStats } from "../controllers/orders/OrdersController";
 import { getOrdersByStatus, ordersByDateRange, updateOrder } from "../controllers/orders/OrdersController";
 import { getOrderByCourierId, getOrderById, getOrderByUserId } from "../controllers/orders/OrdersController";
@@ -12,6 +12,7 @@ export const orderRoutes = Router();
 
 orderRoutes.get("/", getAllOrders);
 orderRoutes.post("/", orderValidation, authenticateJWT, validate, createOrder);
+orderRoutes.post("/create", authenticateJWT, validate, createOrderNative);
 orderRoutes.get("/status", getOrdersByStatus);
 orderRoutes.get("/:id", getOrderById);
 orderRoutes.put("/update/:id", updateOrder);

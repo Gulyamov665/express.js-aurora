@@ -95,3 +95,23 @@ export interface IGetPriceResponse {
   price: number | undefined;
   code: number;
 }
+
+export interface IVendorInfo {
+  id: number;
+  created_time: string;
+  update_time: string;
+  name: string;
+  address: string;
+  is_active: boolean;
+  telegram_link: string;
+  instagram_link: string;
+  background_photo: string;
+  logo: string;
+  availability_orders: boolean;
+  orders_chat_id: number;
+  waiter_chat_id: number;
+  lat: string;
+  long: string;
+  editors: number[];
+  contacts: string[];
+}

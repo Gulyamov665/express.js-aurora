@@ -1,7 +1,14 @@
 import axios from "axios";
 import { UserInfoType, UserLocationType } from "../controllers/orders/types";
 import { Orders } from "../entities/Orders";
-import { DeliveryData, DistanceMatrixResponse, DistanceResult, IGetPriceResponse, ProductItem } from "./types";
+import {
+  DeliveryData,
+  DistanceMatrixResponse,
+  DistanceResult,
+  IGetPriceResponse,
+  IVendorInfo,
+  ProductItem,
+} from "./types";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -10,6 +17,7 @@ const API_KEY = process.env.GOOGLE_API_KEY;
 interface UserInfo {
   fullName: string;
   location: UserLocationType;
+  phone?: string;
 }
 
 interface UserChannel {
@@ -32,13 +40,13 @@ interface VendorStatus {
 
 export async function getUserInfo(userId: number): Promise<UserInfo> {
   try {
-    // const userResponse = await axios.get<UserInfoType>(`https://new.aurora-api.uz/api/v1/auth/user/${userId}`);
     const userResponse = await axios.get<UserInfoType>(`${BASE_DJANGO}/v1/auth/user/${userId}`);
     const user = userResponse.data;
 
     return {
       fullName: `${user.first_name} ${user.last_name}`,
       location: user.location as UserLocationType,
+      phone: user.phone,
     };
   } catch (error) {
     console.error("❌ Ошибка при получении пользователя:", error);
@@ -51,7 +59,6 @@ export async function getUserInfo(userId: number): Promise<UserInfo> {
 
 export async function getCourierInfo(userId: string): Promise<UserInfoType | null> {
   try {
-    // const userResponse = await axios.get<UserInfoType>(`https://new.aurora-api.uz/api/v1/auth/user/${userId}`);
     const userResponse = await axios.get<UserInfoType>(`${BASE_DJANGO}/v1/auth/user/${userId}`);
     const user = userResponse.data;
 
@@ -174,5 +181,15 @@ export const getDeliveryPrice = async (vendor_id: number, total_price: number, d
     return response.data;
   } catch (error) {
     console.error("Ошибка при получении getDeliveryPrice", error);
+  }
+};
+
+export const getVendorById = async (id: number): Promise<IVendorInfo | null> => {
+  try {
+    const response = await axios.get<IVendorInfo>(`${BASE_DJANGO}/v1/restaurant/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Ошибка при получении ресторана:", error);
+    return null;
   }
 };

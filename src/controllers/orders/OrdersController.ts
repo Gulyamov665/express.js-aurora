@@ -3,21 +3,13 @@ import { OrderService } from "../../services/OrdersService";
 import { handleError } from "../../utils/handlerError";
 import { calcTotalPrice, totalSum, totalSumFee } from "../../utils/countTotalPrice";
 import { Orders } from "../../entities/Orders";
-import { TypedRequest } from "./types";
+import { TypedRequest, UserInfoType } from "./types";
 import { io } from "../..";
 import { sendPushToCouriers } from "../../config/firebase/sendPushHandler";
 import { CartService } from "../../services/CartService";
-import { getChannel, getCourierInfo, getDistance } from "../../api/api";
+import { getChannel, getCourierInfo, getVendorById } from "../../api/api";
 import { getUserInfo, notifyAboutNewOrder, notifyAboutOrderStatusChange } from "../../api/api";
 import { ChangeOrderItemsParams } from "../../services/orderTypes";
-import { Product } from "../../services/cartTypes";
-
-export interface CreateOrderDTO {
-  created_by: number;
-  products: Product[];
-  cart_id: number;
-  restaurant: number;
-}
 
 export const getAllOrders = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
@@ -52,6 +44,69 @@ export const createOrder = async (req: TypedRequest<Orders>, res: Response) => {
       created_by: createdByFullName,
       location,
       destination: cart?.destination,
+    };
+
+    const newOrder = await OrderService.createOrder(orderData);
+
+    io.emit("new_order", newOrder);
+    notifyAboutNewOrder(newOrder);
+
+    if (res.statusCode === 200) {
+      const cartDeleted = await CartService.removeCartByUserAndRestaurant({
+        user_id: data.user_id,
+        restaurant: data.restaurant.id,
+      });
+
+      // Удаляем корзину по cart_id
+      if (!cartDeleted) {
+        console.warn(`Корзина с ID ${data} не найдена или не была удалена.`);
+      }
+    }
+    res.status(201).json(newOrder);
+  } catch (error) {
+    return handleError(res, error, 400);
+  }
+};
+
+export const createOrderNative = async (req: TypedRequest<Orders>, res: Response) => {
+  const fee = 3500;
+  try {
+    const data = req.body;
+
+    const { fullName: createdByFullName, location, phone } = await getUserInfo(Number(data?.user_id));
+    const cart = await CartService.getCartItems(String(data.user_id), String(data.restaurant.id));
+    const vendor = await getVendorById(data.restaurant.id);
+
+    if (!vendor) return handleError(res, "Ресторан не найден", 400);
+
+    if (!cart) return handleError(res, "Корзина не найдена", 400);
+
+    const totalPrice = calcTotalPrice(cart.products);
+
+    const orderData = {
+      total_price: totalPrice && totalPrice + fee + data.delivery_price,
+      created_by: createdByFullName,
+      location,
+      destination: cart?.destination,
+      restaurant: {
+        id: vendor.id,
+        name: vendor.name,
+        photo: vendor.logo,
+        address: vendor.address,
+        phone: vendor.contacts?.[0] || "не указан",
+        lat: vendor.lat,
+        long: vendor.long,
+      },
+      status: "new",
+      comment: data.comment || "",
+      orders_chat_id: String(vendor.orders_chat_id) || "",
+      cart_id: cart.id,
+      user_phone_number: phone,
+      user_id: data.user_id,
+      products: cart.products,
+      delivery_price: data.delivery_price || 0,
+      lat: "39.7470289",
+      long: "64.4022198",
     };
 
     const newOrder = await OrderService.createOrder(orderData);
